@@ -1,3 +1,5 @@
+-- Mehmet
+
 CREATE TABLE IF NOT EXISTS cast (
     cast_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     movie_id VARCHAR,

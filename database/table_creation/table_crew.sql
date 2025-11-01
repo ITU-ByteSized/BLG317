@@ -1,3 +1,5 @@
+-- Caner
+
 CREATE TABLE IF NOT EXISTS crew (
     crew_id INT PRIMARY KEY NOT NULL,
     movie_id VARCHAR(12),
