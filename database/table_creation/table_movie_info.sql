@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS movie_info (
     crew_id INT,
     altTitles_id INT,
     cast_id INT,
+    rating_id INT,
     is_adult BOOLEAN,
     start_year INT,
     end_year INT,
@@ -14,5 +15,6 @@ CREATE TABLE IF NOT EXISTS movie_info (
     FOREIGN KEY (award_id) REFERENCES awards(award_id),
     FOREIGN KEY (crew_id) REFERENCES crew(crew_id),
     FOREIGN KEY (altTitles_id) REFERENCES altTitles(altTitles_id),
-    FOREIGN KEY (cast_id) REFERENCES cast(cast_id)
+    FOREIGN KEY (cast_id) REFERENCES cast(cast_id),
+    FOREIGN KEY (rating_id) REFERENCES ratings(rating_id)
 );
