@@ -1,9 +1,9 @@
 -- Caner
 
 CREATE TABLE IF NOT EXISTS people (
-    person_id VARCHAR(12) PRIMARY KEY NOT NULL,
-    primary_name VARCHAR(255),
+    person_id VARCHAR PRIMARY KEY NOT NULL,
+    primary_name VARCHAR,
     birth_year INT,
     death_year INT,
-    primary_profession VARCHAR(255)
+    primary_profession VARCHAR
 );
