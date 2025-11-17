@@ -1,13 +1,13 @@
---burak
-
 CREATE TABLE IF NOT EXISTS awards (
-    award_id INT PRIMARY KEY NOT NULL,
-    ceremony_year VARCHAR(4),
-    class VARCHAR(100),
-    category VARCHAR(100),
-    movie_id VARCHAR(12),
-    nominee_id VARCHAR(12),
+    award_id INT AUTO_INCREMENT PRIMARY KEY,
+    ceremony_id INT,
+    category_id INT,
+    production_id VARCHAR(12),
     winner BOOLEAN,
-    FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
-    FOREIGN KEY (nominee_id) REFERENCES people(person_id)
+    detail TEXT,
+    note TEXT,
+    citation TEXT,
+    FOREIGN KEY (ceremony_id) REFERENCES award_ceremonies(ceremony_id),
+    FOREIGN KEY (category_id) REFERENCES award_categories(category_id),
+    FOREIGN KEY (production_id) REFERENCES productions(production_id)
 );

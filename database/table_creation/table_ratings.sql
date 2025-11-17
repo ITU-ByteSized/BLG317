@@ -1,7 +1,6 @@
--- Mehmet
-
 CREATE TABLE IF NOT EXISTS ratings (
-    rating_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    average_rating NUMERIC(3,1) CHECK (average_rating BETWEEN 0 AND 10),
-    num_votes INT CHECK (num_votes >= 0)
+    rating_id VARCHAR(12) PRIMARY KEY,
+    average_rating DECIMAL(3,1),
+    num_votes INT,
+    FOREIGN KEY (rating_id) REFERENCES productions(production_id)
 );
