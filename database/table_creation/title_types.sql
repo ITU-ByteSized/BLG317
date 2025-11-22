@@ -1,4 +1,0 @@
-CREATE TABLE IF NOT EXISTS title_types (
-    type_id INT AUTO_INCREMENT PRIMARY KEY,
-    type_name VARCHAR(50) UNIQUE
-);

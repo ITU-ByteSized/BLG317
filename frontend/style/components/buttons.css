@@ -1,0 +1,29 @@
+.btn { 
+    padding: 8px 16px; 
+    border-radius: 6px; 
+    font-size: 14px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+    border: none; 
+}
+
+.btn-login { 
+    background: transparent; 
+    color: var(--text-main); 
+    border: 1px solid var(--border-color); 
+}
+
+.btn-login:hover { 
+    border-color: var(--accent-color); 
+    color: var(--accent-color); 
+}
+
+.btn-signup { 
+    background-color: var(--accent-color); 
+    color: #000; 
+}
+
+.btn-signup:hover { 
+    opacity: 0.9; 
+}

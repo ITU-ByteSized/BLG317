@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title • ByteSizedDB</title>
+    <link rel="stylesheet" href="../style/global.css">
+</head>
+<body>
+
+    <header></header>
+
+    <main class="page">
+        <section id="movie-hero" class="movie-hero">
+            <div class="movie-hero-content">
+                <div class="movie-hero-left">
+                    <img id="movie-poster" class="movie-poster-lg" alt="Movie Poster">
+                </div>
+
+                <div class="movie-hero-right">
+                    <h1 id="movie-title" class="movie-detail-title">Loading...</h1>
+                    <div id="movie-submeta" class="movie-submeta"></div>
+                    <div id="movie-genres" class="movie-genres"></div>
+                    
+                    <div id="movie-ratings" class="movie-ratings-box"></div>
+
+                    <div class="user-rating-box">
+                        <span class="user-rating-label">YOUR RATING</span>
+                        <div id="user-rating-stars" class="user-rating-stars"></div>
+                        <span id="user-rating-hint" class="user-rating-hint"></span>
+                    </div>
+
+                    <p id="movie-overview" class="movie-overview"></p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="movie-section">
+            <h2>Top Cast</h2>
+            <div id="movie-cast" class="person-list"></div>
+        </section>
+
+        <section class="movie-section">
+            <h2>Crew</h2>
+            <div id="movie-crew" class="person-list"></div>
+        </section>
+
+
+    </main>
+
+    <script type="module" src="../script/pages/movie.js"></script>
+</body>
+</html>

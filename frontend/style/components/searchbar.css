@@ -1,0 +1,58 @@
+.searchbar-container {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.searchbar-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #555;
+    padding: 10px 40px 10px 8px;
+    color: white;
+    font-size: 1.1rem;
+    transition: border-color 0.2s ease;
+}
+
+.searchbar-input:focus {
+    outline: none;
+    border-bottom-color: var(--accent-color);
+}
+
+.searchbar-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: var(--accent-color);
+    transition: width 0.3s ease;
+}
+
+.searchbar-input:focus + .searchbar-icon-btn + .searchbar-underline {
+    width: 100%;
+}
+
+.searchbar-icon-btn {
+    position: absolute;
+    right: 5px;
+    top: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.searchbar-input:focus ~ .searchbar-icon-btn {
+    opacity: 1;
+}
+
+.searchbar-icon {
+    width: 22px;
+    height: 22px;
+    fill: var(--accent-color);
+}

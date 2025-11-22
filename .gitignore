@@ -1,1 +1,5 @@
 .DS_Store
+.env
+backend/data_importer.py
+frontend/script/movies.js
+*.pyc

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile • ByteSizedDB</title>
+    <link rel="stylesheet" href="../style/global.css">
+</head>
+<body>
+
+    <header></header>
+
+    <main class="page profile-page">
+        <section class="profile-hero-section">
+            <div class="profile-hero-content">
+                <div class="profile-avatar-large">
+                    <span id="profile-initial">U</span>
+                </div>
+                <div class="profile-details">
+                    <h1 id="profile-username">Username</h1>
+                    <p id="profile-email" class="profile-email">user@example.com</p>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-count">0</span>
+                            <span class="stat-label">Ratings</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-year">2025</span>
+                            <span class="stat-label">Member Since</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="movie-section">
+            <div class="section-header">
+                <h2>My Ratings</h2>
+                <div class="section-line"></div>
+            </div>
+            <div id="profile-ratings" class="grid-container">
+                </div>
+        </section>
+    </main>
+
+    <script type="module" src="../script/pages/profile.js"></script>
+</body>
+</html>
