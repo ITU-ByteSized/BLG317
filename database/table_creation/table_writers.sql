@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS writers (
-    production_id VARCHAR(12),
-    person_id VARCHAR(12),
+    production_id VARCHAR(12) NOT NULL,
+    person_id VARCHAR(12) NOT NULL,
     PRIMARY KEY (production_id, person_id),
     FOREIGN KEY (production_id) REFERENCES productions(production_id) ON DELETE CASCADE,
     FOREIGN KEY (person_id) REFERENCES people(person_id) ON DELETE CASCADE

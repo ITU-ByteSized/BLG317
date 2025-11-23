@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS person_professions (
-    person_id VARCHAR(12),
-    profession_id INT,
+    person_id VARCHAR(12) NOT NULL,
+    profession_id INT NOT NULL,
     PRIMARY KEY (person_id, profession_id),
     FOREIGN KEY (person_id) REFERENCES people(person_id) ON DELETE CASCADE,
     FOREIGN KEY (profession_id) REFERENCES professions(profession_id) ON DELETE CASCADE
