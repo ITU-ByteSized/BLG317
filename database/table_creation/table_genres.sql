@@ -1,5 +1,3 @@
---Ezgi
-
 CREATE TABLE IF NOT EXISTS genres (
     genre_id INT AUTO_INCREMENT PRIMARY KEY,
     genre_name VARCHAR(50) UNIQUE NOT NULL

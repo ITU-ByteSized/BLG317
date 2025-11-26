@@ -1,6 +1,4 @@
--- Ezgi
-
-CREATE TABLE alt_titles (
+CREATE TABLE IF NOT EXISTS alt_titles (
     altTitles_id INT PRIMARY KEY,
     movie_id VARCHAR(50),
     ordering INT,

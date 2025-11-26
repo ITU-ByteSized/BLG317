@@ -1,4 +1,4 @@
-LOAD DATA LOCAL INFILE 'database\init_data\title_akas_subset.tsv'
+LOAD DATA LOCAL INFILE 'database/init_data/title_akas_subset.tsv'
 INTO TABLE title_akas
 CHARACTER SET utf8mb4
 FIELDS TERMINATED BY '\t'

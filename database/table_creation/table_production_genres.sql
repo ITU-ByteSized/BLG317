@@ -1,5 +1,3 @@
---Ezgi
-
 CREATE TABLE IF NOT EXISTS production_genres (
     production_id VARCHAR(12),
     genre_id INT,
