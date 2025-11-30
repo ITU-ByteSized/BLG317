@@ -10,7 +10,7 @@ CREATE TABLE staging_basics (
     runtimeMinutes VARCHAR(10),
     genres TEXT
 );
-LOAD DATA LOCAL INFILE 'C:/Users/burak/OneDrive/Masaüstü/title.basics.tsv'
+LOAD DATA LOCAL INFILE 'database/datasets/title.basics.tsv'
 INTO TABLE staging_basics
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'

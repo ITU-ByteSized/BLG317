@@ -9,7 +9,7 @@ CREATE TABLE staging_principals (
 	characters TEXT
 );
 
-LOAD DATA LOCAL INFILE './datasets/title.principals.tsv'
+LOAD DATA LOCAL INFILE 'database/datasets/title.principals.tsv'
 INTO TABLE staging_principals
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'

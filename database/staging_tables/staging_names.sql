@@ -9,7 +9,7 @@ CREATE TABLE staging_names (
 	knownForTitles TEXT
 );
 
-LOAD DATA LOCAL INFILE './datasets/name.basics.tsv'
+LOAD DATA LOCAL INFILE 'database/datasets/name.basics.tsv'
 INTO TABLE staging_names
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'
