@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login • ByteSizedDB</title>
+    <link rel="stylesheet" href="../style/global.css">
+</head>
+<body>
+
+    <header></header>
+
+    <main class="page auth-page">
+        <div class="auth-card">
+            <h2>Login</h2>
+            <form id="login-form">
+                <label>
+                    Email
+                    <input type="email" id="login-email" required>
+                </label>
+
+                <label>
+                    Password
+                    <input type="password" id="login-password" required>
+                </label>
+
+                <label class="remember-me-container">
+                    <input type="checkbox" id="remember-me">
+                    Remember me
+                </label>
+
+                <button type="submit" class="btn btn-signup" style="width:100%;">
+                    Login
+                </button>
+            </form>
+
+            <p class="auth-switch">
+                Don’t have an account?
+                <a href="signup.html">Sign Up</a>
+            </p>
+
+            <div id="login-error" class="auth-error"></div>
+        </div>
+    </main>
+
+    <script type="module" src="../script/pages/login.js"></script>
+</body>
+</html>

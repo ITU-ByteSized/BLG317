@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteSizedDB</title>
+    <link rel="stylesheet" href="../style/global.css">
+    <link rel="stylesheet" href="../style/auth.css">
+</head>
+<body>
+
+    <script type="module" src="../script/pages/index.js"></script>
+    <header></header>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" onclick="setFilter('movie', this)">Movies</button>
+        <button class="filter-btn" onclick="setFilter('tvSeries', this)">TV Series</button>
+        <button class="filter-btn" onclick="setFilter('tvEpisode', this)">Episodes</button>
+    </div>
+
+    <div id="movie-container" class="grid-container"></div>
+    <div id="movie-container" class="grid-container"></div>
+    <div id="pagination-wrapper" class="pagination-container"></div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+/* Global tokens & base layout */
+@import 'pages/base.css';
+
+/* Components */
+@import 'components/navbar.css';
+@import 'components/auth.css';
+@import 'components/searchbar.css';
+@import 'components/pagination.css';
+@import 'components/rating.css';
+@import 'components/card.css';
+@import 'components/buttons.css';
+
+/* Page-level styles */
+@import 'pages/movie.css';
+@import 'pages/person.css';
+@import 'pages/profile.css';

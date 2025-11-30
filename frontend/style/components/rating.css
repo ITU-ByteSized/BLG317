@@ -1,0 +1,25 @@
+.rating-star-wrapper {
+    display: flex;
+    gap: 4px;
+    user-select: none;
+}
+
+.rating-star {
+    font-size: 26px;
+    cursor: pointer;
+    color: #555;
+    transition: color 0.15s, transform 0.15s;
+}
+
+.rating-star.active {
+    color: var(--accent-color); /* senin f5c518 */
+    text-shadow: 0 0 10px rgba(245, 197, 24, 0.6);
+}
+
+.rating-star:hover {
+    transform: scale(1.13);
+}
+
+.rating-star-wrapper.read-only .rating-star {
+    cursor: default;
+}
