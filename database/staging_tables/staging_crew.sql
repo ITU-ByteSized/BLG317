@@ -6,7 +6,7 @@ CREATE TABLE staging_crew (
     writers TEXT    
 );
 
-LOAD DATA LOCAL INFILE 'C:/Users/Ezgi/Desktop/BLG317-main/database/dataset/title.crew.tsv'
+LOAD DATA LOCAL INFILE 'C:/Users/Ezgi/OneDrive/Desktop/dataset/title.crew.tsv'
 INTO TABLE staging_crew
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'
