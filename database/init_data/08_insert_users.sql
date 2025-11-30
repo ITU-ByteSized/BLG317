@@ -1,0 +1,2 @@
+INSERT IGNORE INTO users (username, email, password_hash, avatar_url) VALUES 
+('demo_user', 'demo@example.com', 'pbkdf2:sha256:600000$dummyhashformock$somesaltvalues', 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo');
