@@ -72,6 +72,7 @@ def fetch_movie_detail_db(production_id):
     try:
         cursor = conn.cursor(dictionary=True)
         
+        
         sql_prod = """
             SELECT p.*, r.average_rating, r.num_votes, tt.type_name as type
             FROM productions p
@@ -85,6 +86,7 @@ def fetch_movie_detail_db(production_id):
         if not movie:
             return None
 
+       
         sql_genres = """
             SELECT g.genre_name 
             FROM production_genres pg 
@@ -95,6 +97,7 @@ def fetch_movie_detail_db(production_id):
         genres = [row['genre_name'] for row in cursor.fetchall()]
         movie['genres'] = genres
 
+       
         sql_cast = """
             SELECT pm.primary_name as name, cm.characters, cm.person_id
             FROM cast_members cm
@@ -105,6 +108,24 @@ def fetch_movie_detail_db(production_id):
         """
         cursor.execute(sql_cast, (production_id,))
         movie['cast'] = cursor.fetchall()
+
+        
+        
+        sql_alt = """
+            SELECT 
+                a.localized_title, 
+                r.region_name,
+                l.language_name,
+                a.types,
+                a.is_original_title
+            FROM alt_titles a
+            LEFT JOIN regions r ON a.region_code = r.region_code
+            LEFT JOIN languages l ON a.language_code = l.language_code
+            WHERE a.production_id = %s
+            ORDER BY r.region_name, l.language_name
+        """
+        cursor.execute(sql_alt, (production_id,))
+        movie['alt_titles'] = cursor.fetchall()
 
         return movie
     except Exception as e:

@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS staging_crew;
 
 CREATE TABLE staging_crew (
     tconst VARCHAR(20),
-    directors TEXT, 
-    writers TEXT    
+    directors TEXT,
+    writers TEXT
 );
 
 LOAD DATA LOCAL INFILE 'C:/Users/Ezgi/OneDrive/Desktop/dataset/title.crew.tsv'

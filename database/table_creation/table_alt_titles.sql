@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS alt_titles (
     alt_title_id INT AUTO_INCREMENT PRIMARY KEY,
     production_id VARCHAR(12) NOT NULL,
     ordering INT,
-    localized_title VARCHAR(255) NOT NULL,
+    localized_title TEXT NOT NULL,
     region_code VARCHAR(10),
     language_code VARCHAR(10),
     types VARCHAR(100),
