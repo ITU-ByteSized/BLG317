@@ -1,5 +1,9 @@
 PYTHON ?= python3
 
+ifeq ($(OS),Windows_NT)
+	PYTHON := py
+endif
+
 .PHONY: run init-db seed db-setup
 
 run:
