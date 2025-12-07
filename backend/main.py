@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 
-from backend.app.routes import auth, movies, people, profile
+from backend.app.routes import auth, movies, people, profile, awards
 
 def create_app():
     app = Flask(__name__)
@@ -12,6 +12,7 @@ def create_app():
     app.register_blueprint(movies.bp)
     app.register_blueprint(people.bp)
     app.register_blueprint(profile.bp)
+    app.register_blueprint(awards.bp)
     
     return app
 
