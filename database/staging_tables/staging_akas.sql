@@ -11,7 +11,8 @@ CREATE TABLE staging_akas (
     isOriginalTitle TINYINT
 );
 
-LOAD DATA LOCAL INFILE ':/Users/Ezgi/OneDrive/Desktop/dataset/title.akas.tsv'
+
+LOAD DATA LOCAL INFILE 'C:/Users/Ezgi/OneDrive/Desktop/dataset/title.akas.tsv'
 INTO TABLE staging_akas
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'

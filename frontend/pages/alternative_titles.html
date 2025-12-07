@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alternative Titles • ByteSizedDB</title>
+    <link rel="stylesheet" href="../style/global.css">
+    <style>
+       
+        .alt-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: opacity 0.2s;
+        }
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+        .movie-header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+        .movie-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .alt-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .alt-table th, .alt-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+            color: #ccc;
+        }
+        .alt-table th {
+            background-color: #252525;
+            color: var(--accent-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .alt-table tr:hover {
+            background-color: #2a2a2a;
+        }
+        .tag-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background-color: #333;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <header></header>
+
+    <main class="page alt-container">
+        <a id="back-link" href="#" class="back-btn">← Back to Movie Details</a>
+
+        <div class="movie-header">
+            <h1 id="movie-title">Loading...</h1>
+            <p style="color: #888;">International Releases & Alternative Titles</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="alt-table">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Region</th>
+                        <th style="width: 15%;">Language</th>
+                        <th style="width: 45%;">Localized Title</th>
+                        <th style="width: 20%;">Type / Attribute</th>
+                    </tr>
+                </thead>
+                <tbody id="alt-titles-body">
+                    <tr><td colspan="4" style="text-align:center; padding: 20px;">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script type="module" src="../script/pages/alternative_titles.js"></script>
+</body>
+</html>

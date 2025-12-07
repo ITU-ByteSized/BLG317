@@ -5,7 +5,7 @@ CREATE TABLE staging_episodes (
     seasonNumber VARCHAR(10),
     episodeNumber VARCHAR(10)
 );
-LOAD DATA LOCAL INFILE 'C:/Users/burak/OneDrive/Masaüstü/title.episode.tsv'
+LOAD DATA LOCAL INFILE 'C:/Users/Ezgi/OneDrive/Desktop/dataset/title.episode.tsv'
 INTO TABLE staging_episodes
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'
