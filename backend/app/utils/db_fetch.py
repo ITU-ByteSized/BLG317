@@ -43,6 +43,7 @@ def search_movies_db(query, type_filter, limit, offset=0):
         params.append(f"%{query}%")
 
     if type_filter and type_filter != "all":
+        # Type filter logic would go here if needed explicitly joining title_types
         pass 
 
     base_query += " ORDER BY r.num_votes DESC LIMIT %s OFFSET %s"
@@ -55,7 +56,7 @@ def search_movies_db(query, type_filter, limit, offset=0):
         
         cursor.execute("SELECT FOUND_ROWS()") 
         
-        total = len(rows)
+        total = len(rows) # In a real implementation with LIMIT, FOUND_ROWS needs SQL_CALC_FOUND_ROWS or a separate count query
         
         return rows, total
     except Exception as e:
@@ -108,6 +109,25 @@ def fetch_movie_detail_db(production_id):
         """
         cursor.execute(sql_cast, (production_id,))
         movie['cast'] = cursor.fetchall()
+        
+        # Crew fetch logic could be similar, simplified here or added if needed
+        # Assuming similar structure for crew if needed in movie detail
+
+        sql_alt = """
+            SELECT 
+                a.localized_title, 
+                r.region_name,
+                l.language_name,
+                a.types,
+                a.is_original_title
+            FROM alt_titles a
+            LEFT JOIN regions r ON a.region_code = r.region_code
+            LEFT JOIN languages l ON a.language_code = l.language_code
+            WHERE a.production_id = %s
+            ORDER BY r.region_name, l.language_name
+        """
+        cursor.execute(sql_alt, (production_id,))
+        movie['alt_titles'] = cursor.fetchall()
 
         
         
@@ -131,5 +151,70 @@ def fetch_movie_detail_db(production_id):
     except Exception as e:
         print(f"Detail error: {e}")
         return None
+    finally:
+        if conn: conn.close()
+
+def fetch_episodes_by_series(parent_id):
+    conn = get_db_connection()
+    if not conn:
+        return []
+
+    sql = """
+        SELECT 
+            e.season_number, 
+            e.episode_number, 
+            p.primary_title, 
+            p.production_id, 
+            p.runtime_minutes, 
+            p.poster_url,
+            r.average_rating, 
+            r.num_votes
+        FROM episodes e
+        JOIN productions p ON e.episode_id = p.production_id
+        LEFT JOIN ratings r ON e.episode_id = r.rating_id
+        WHERE e.parent_id = %s
+        ORDER BY e.season_number ASC, e.episode_number ASC
+    """
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(sql, (parent_id,))
+        rows = cursor.fetchall()
+        return rows
+    except Exception as e:
+        print(f"Fetch episodes error: {e}")
+        return []
+    finally:
+        if conn: conn.close()
+
+def fetch_awards_by_movie(production_id):
+    conn = get_db_connection()
+    if not conn:
+        return []
+
+    sql = """
+        SELECT 
+            a.award_id,
+            ac.category_name, 
+            acer.ceremony_year,
+            a.winner,
+            a.detail,
+            p.primary_title,
+            p.poster_url,
+            p.production_id
+        FROM awards a
+        JOIN award_categories ac ON a.category_id = ac.category_id
+        JOIN award_ceremonies acer ON a.ceremony_id = acer.ceremony_id
+        JOIN productions p ON a.production_id = p.production_id
+        WHERE a.production_id = %s
+        ORDER BY acer.ceremony_year DESC, ac.category_name ASC
+    """
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(sql, (production_id,))
+        rows = cursor.fetchall()
+        return rows
+    except Exception as e:
+        print(f"Fetch movie awards error: {e}")
+        return []
     finally:
         if conn: conn.close()

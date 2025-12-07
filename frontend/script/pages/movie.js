@@ -19,6 +19,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     const starsBox = document.getElementById("user-rating-stars");
     const hintEl = document.getElementById("user-rating-hint");
 
+    const btnCast = document.getElementById("btn-cast");
+    const btnCrew = document.getElementById("btn-crew");
+    const btnAlt = document.getElementById("btn-alt-titles");
+    const btnEp = document.getElementById("btn-episodes");
+    const btnAwards = document.getElementById("btn-awards");
+
+    const sectionCast = document.getElementById("section-cast");
+    const sectionCrew = document.getElementById("section-crew");
+
     if (overviewEl) {
         overviewEl.innerHTML = "<span style='color:#888'>Loading details...</span>";
     }
@@ -27,9 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const data = await apiGetMovieById(id);
         const movie = data.movie || data;
 
-        if (titleEl) {
-            titleEl.textContent = movie.primary_title || "Untitled";
-        }
+        if (titleEl) titleEl.textContent = movie.primary_title || "Untitled";
         
         if (posterEl) {
             posterEl.src = movie.poster_url || "https://via.placeholder.com/500x750?text=No+Poster";
@@ -70,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             castEl.innerHTML = "";
             const castList = data.cast || [];
             if (castList.length === 0) {
-                castEl.innerHTML = "<p class='text-muted'>No cast information.</p>";
+                castEl.innerHTML = "<p class='text-muted' style='text-align:center; width:100%; grid-column:1/-1;'>No cast information.</p>";
             } else {
                 castList.forEach((person) => {
                     const card = createPersonCard(person, "actor");
@@ -83,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             crewEl.innerHTML = "";
             const crewList = data.crew || [];
             if (crewList.length === 0) {
-                crewEl.innerHTML = "<p class='text-muted'>No crew information.</p>";
+                crewEl.innerHTML = "<p class='text-muted' style='text-align:center; width:100%; grid-column:1/-1;'>No crew information.</p>";
             } else {
                 crewList.forEach((person) => {
                     const card = createPersonCard(person, "crew");
@@ -120,8 +127,44 @@ document.addEventListener("DOMContentLoaded", async () => {
             titleEl.textContent = "Content Not Found";
         }
         if (overviewEl) {
-            overviewEl.textContent = "Could not load details. Check console for errors.";
+            overviewEl.textContent = "Could not load details.";
         }
+    }
+
+    const switchTab = (activeBtn, sectionToShow) => {
+        [btnCast, btnCrew].forEach(b => b.classList.remove("active"));
+        activeBtn.classList.add("active");
+
+        sectionCast.classList.add("hidden");
+        sectionCrew.classList.add("hidden");
+
+        if (sectionToShow) sectionToShow.classList.remove("hidden");
+    };
+
+    if (btnCast) {
+        btnCast.addEventListener("click", () => switchTab(btnCast, sectionCast));
+    }
+
+    if (btnCrew) {
+        btnCrew.addEventListener("click", () => switchTab(btnCrew, sectionCrew));
+    }
+
+    if (btnAlt) {
+        btnAlt.addEventListener("click", () => {
+            window.location.href = `alternative_titles.html?id=${id}`;
+        });
+    }
+
+    if (btnEp) {
+        btnEp.addEventListener("click", () => {
+            window.location.href = `episodes.html?id=${id}`;
+        });
+    }
+
+    if (btnAwards) {
+        btnAwards.addEventListener("click", () => {
+            window.location.href = `awards.html?movieId=${id}`;
+        });
     }
 });
 
