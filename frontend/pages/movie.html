@@ -35,16 +35,25 @@
             </div>
         </section>
         
-        <section class="movie-section">
-            <h2>Top Cast</h2>
-            <div id="movie-cast" class="person-list"></div>
-        </section>
+        <div class="movie-nav-container">
+            <button id="btn-cast" class="nav-tab-btn active">Top Cast</button>
+            <button id="btn-crew" class="nav-tab-btn">Crew</button>
+            <button id="btn-alt-titles" class="nav-tab-btn">Alternative Titles</button>
+            <button id="btn-episodes" class="nav-tab-btn">Episodes</button>
+            <button id="btn-awards" class="nav-tab-btn">Awards</button>
+        </div>
 
-        <section class="movie-section">
-            <h2>Crew</h2>
-            <div id="movie-crew" class="person-list"></div>
-        </section>
+        <div id="section-cast" class="tab-content">
+            <section class="movie-section" style="margin-top: 20px;">
+                <div id="movie-cast" class="person-list"></div>
+            </section>
+        </div>
 
+        <div id="section-crew" class="tab-content hidden">
+            <section class="movie-section" style="margin-top: 20px;">
+                <div id="movie-crew" class="person-list"></div>
+            </section>
+        </div>
 
     </main>
 
