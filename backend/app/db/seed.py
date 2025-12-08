@@ -1,4 +1,5 @@
 import os
+import time
 import mysql.connector
 from backend.app.config import settings
 
@@ -25,7 +26,7 @@ def get_db_connection():
             database=settings.DB_NAME,
             user=settings.DB_USER,
             password=settings.DB_PASS,
-            autocommit=True,
+            autocommit=False,
             allow_local_infile=True
         )
         return conn
@@ -49,18 +50,24 @@ def run_sql_file(cursor, file_path):
             try:
                 cursor.execute(cleaned_command)
             except mysql.connector.Error as err:
-                print(f"  -> [NOTE] Command info: {err}")
+                print(f"  -> [INFO] Query skipped/error: {err}")
 
 def apply_seed():
+    start_time = time.time()
     print("--- Database Setup Started ---")
+    
     db_conn = get_db_connection()
     if not db_conn:
         print("Could not connect to database.")
         return
 
     cursor = db_conn.cursor()
+    
     try:
+        print("\n--- Optimizing System Settings ---")
         cursor.execute("SET FOREIGN_KEY_CHECKS=0;")
+        cursor.execute("SET UNIQUE_CHECKS=0;")
+        cursor.execute("SET SQL_LOG_BIN=0;")
         
         print("\n--- 1. Creating Main Tables ---")
         for file_name in TABLE_FILES:
@@ -71,23 +78,29 @@ def apply_seed():
             files = sorted([f for f in os.listdir(STAGING_DIR) if f.endswith('.sql')])
             for file_name in files:
                 run_sql_file(cursor, os.path.join(STAGING_DIR, file_name))
-        else:
-            print(f"[WARNING] '{STAGING_DIR}' folder not found!")
-
-        print(f"\n--- 3. Inserting Data from: {os.path.basename(DATA_DIR)} ---")
+        
+        print(f"\n--- 3. Inserting Data: {os.path.basename(DATA_DIR)} ---")
         if os.path.exists(DATA_DIR):
             files = sorted([f for f in os.listdir(DATA_DIR) if f.endswith('.sql')])
             for file_name in files:
                 run_sql_file(cursor, os.path.join(DATA_DIR, file_name))
-        else:
-            print(f"[WARNING] '{DATA_DIR}' folder not found!")
 
+        print("\n--- Committing Changes to Disk... ---")
+        db_conn.commit()
+        
         cursor.execute("SET FOREIGN_KEY_CHECKS=1;")
-        print("\n--- Setup Completed Successfully ---")
+        cursor.execute("SET UNIQUE_CHECKS=1;")
+        cursor.execute("SET SQL_LOG_BIN=1;")
+        
+        elapsed = time.time() - start_time
+        print(f"\n--- Setup Completed Successfully! (Time: {elapsed:.2f}s) ---")
     
     except Exception as e:
         print(f"\n[CRITICAL ERROR]: {e}")
+        print("Rolling back operations...")
+        db_conn.rollback()
     finally:
+        if cursor: cursor.close()
         if db_conn: db_conn.close()
 
 if __name__ == "__main__":

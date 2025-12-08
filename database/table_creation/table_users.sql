@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS reports (
     report_id INT AUTO_INCREMENT PRIMARY KEY,
     reporter_id INT NOT NULL,
     reported_user_id INT NULL,
-    production_id INT NULL,
+    production_id VARCHAR(12) NULL,
     comment_id INT NULL,
     reason VARCHAR(255) NOT NULL,
     details TEXT,
