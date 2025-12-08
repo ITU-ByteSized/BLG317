@@ -2,12 +2,9 @@ import os
 import mysql.connector
 from backend.app.config import settings
 
-
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-CREATE_DIR = os.path.join(BASE_DIR, "database", "create")
 TABLES_DIR = os.path.join(BASE_DIR, "database", "table_creation")
-
-
+STAGING_DIR = os.path.join(BASE_DIR, "database", "staging_tables")
 DATA_DIR = os.path.join(BASE_DIR, "database", "data_insertion")
 
 TABLE_FILES = [
@@ -29,7 +26,7 @@ def get_db_connection():
             user=settings.DB_USER,
             password=settings.DB_PASS,
             autocommit=True,
-            allow_local_infile=True  
+            allow_local_infile=True
         )
         return conn
     except mysql.connector.Error as err:
@@ -40,9 +37,11 @@ def run_sql_file(cursor, file_path):
     if not os.path.exists(file_path):
         print(f"[WARNING] File not found: {file_path}")
         return
+    
     print(f"Processing: {os.path.basename(file_path)}...")
     with open(file_path, "r", encoding="utf-8") as f:
         sql_content = f.read()
+    
     commands = sql_content.split(';')
     for command in commands:
         cleaned_command = command.strip()
@@ -50,7 +49,7 @@ def run_sql_file(cursor, file_path):
             try:
                 cursor.execute(cleaned_command)
             except mysql.connector.Error as err:
-                print(f"[ERROR] Command failed: {cleaned_command[:100]}... -> {err}")
+                print(f"  -> [NOTE] Command info: {err}")
 
 def apply_seed():
     print("--- Database Setup Started ---")
@@ -63,13 +62,19 @@ def apply_seed():
     try:
         cursor.execute("SET FOREIGN_KEY_CHECKS=0;")
         
-        
-        print("\n--- Creating Tables ---")
+        print("\n--- 1. Creating Main Tables ---")
         for file_name in TABLE_FILES:
             run_sql_file(cursor, os.path.join(TABLES_DIR, file_name))
 
-        
-        print(f"\n--- Inserting Data from: {os.path.basename(DATA_DIR)} ---")
+        print(f"\n--- 2. Setting up Staging Tables from: {os.path.basename(STAGING_DIR)} ---")
+        if os.path.exists(STAGING_DIR):
+            files = sorted([f for f in os.listdir(STAGING_DIR) if f.endswith('.sql')])
+            for file_name in files:
+                run_sql_file(cursor, os.path.join(STAGING_DIR, file_name))
+        else:
+            print(f"[WARNING] '{STAGING_DIR}' folder not found!")
+
+        print(f"\n--- 3. Inserting Data from: {os.path.basename(DATA_DIR)} ---")
         if os.path.exists(DATA_DIR):
             files = sorted([f for f in os.listdir(DATA_DIR) if f.endswith('.sql')])
             for file_name in files:
@@ -79,6 +84,7 @@ def apply_seed():
 
         cursor.execute("SET FOREIGN_KEY_CHECKS=1;")
         print("\n--- Setup Completed Successfully ---")
+    
     except Exception as e:
         print(f"\n[CRITICAL ERROR]: {e}")
     finally:

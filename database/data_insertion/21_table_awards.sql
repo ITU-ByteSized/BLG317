@@ -1,4 +1,4 @@
-INSERT INTO awards (ceremony_id, category_id, production_id, is_winner, detail, note, citation)
+INSERT INTO awards (ceremony_id, category_id, production_id, winner, detail, note, citation)
 SELECT DISTINCT
     so.ceremony,
     ac.category_id,
@@ -9,6 +9,6 @@ SELECT DISTINCT
     so.citation
 FROM staging_oscars so
 JOIN award_categories ac
-  ON ac.canonical_name = so.canonical_category
+  ON ac.canonical_category = so.canonical_category
 LEFT JOIN productions p
   ON p.production_id = so.film_id;

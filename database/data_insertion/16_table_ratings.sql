@@ -1,4 +1,4 @@
-INSERT INTO ratings (production_id, average_rating, num_votes)
+INSERT INTO ratings (rating_id, average_rating, num_votes)
 SELECT
     sr.tconst,
     sr.averageRating,

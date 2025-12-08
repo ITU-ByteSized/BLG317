@@ -1,4 +1,4 @@
-INSERT IGNORE INTO title_types (title_type_name)
+INSERT IGNORE INTO title_types (type_name)
 SELECT DISTINCT titleType
 FROM staging_basics
 WHERE titleType IS NOT NULL

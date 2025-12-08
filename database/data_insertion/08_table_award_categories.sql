@@ -1,4 +1,4 @@
-INSERT IGNORE INTO award_categories (canonical_name, display_name, class)
+INSERT IGNORE INTO award_categories (canonical_category, category_name, class)
 SELECT DISTINCT
     canonical_category,
     category,

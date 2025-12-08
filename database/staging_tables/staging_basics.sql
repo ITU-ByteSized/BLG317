@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS staging_basics;
+
 
 CREATE TABLE staging_basics (
     tconst VARCHAR(20),
@@ -10,10 +10,10 @@ CREATE TABLE staging_basics (
     endYear VARCHAR(10),
     runtimeMinutes VARCHAR(10),
     genres TEXT
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
-LOAD DATA LOCAL INFILE 'C:/Users/Ezgi/OneDrive/Desktop/dataset/title.basics.tsv'
+LOAD DATA LOCAL INFILE 'database/datasets/title.basics.tsv'
 INTO TABLE staging_basics
 FIELDS TERMINATED BY '\t'
 LINES TERMINATED BY '\n'
