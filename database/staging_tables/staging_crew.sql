@@ -1,4 +1,4 @@
-
+DROP TABLE IF EXISTS staging_crew;
 
 CREATE TABLE staging_crew (
     tconst VARCHAR(20),

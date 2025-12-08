@@ -1,4 +1,4 @@
--
+DROP TABLE IF EXISTS staging_oscars;
 
 CREATE TABLE staging_oscars (
     ceremony            INT,

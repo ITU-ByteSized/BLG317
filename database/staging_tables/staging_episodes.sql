@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS staging_episodes;
 
 CREATE TABLE staging_episodes (
     tconst VARCHAR(20),

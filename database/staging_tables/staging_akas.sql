@@ -1,4 +1,4 @@
-
+DROP TABLE IF EXISTS staging_akas;
 
 CREATE TABLE staging_akas (
     titleId VARCHAR(20),
@@ -9,6 +9,9 @@ CREATE TABLE staging_akas (
     types VARCHAR(50),
     attributes TEXT,
     isOriginalTitle TINYINT
+    KEY idx_titleId (titleId)
+    KEY idx_region (region),
+    KEY idx_language (language)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 

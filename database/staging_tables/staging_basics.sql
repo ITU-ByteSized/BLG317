@@ -1,15 +1,17 @@
-
+DROP TABLE IF EXISTS staging_basics;
 
 CREATE TABLE staging_basics (
     tconst VARCHAR(20),
     titleType VARCHAR(20),
     primaryTitle TEXT,
     originalTitle TEXT,
-    isAdult TINYINT,
+    isAdult BOOLEAN,
     startYear VARCHAR(10),
     endYear VARCHAR(10),
     runtimeMinutes VARCHAR(10),
-    genres TEXT
+    genres TEXT,
+    KEY idx_tconst (tconst),
+    KEY idx_titleType (titleType)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 

@@ -1,4 +1,4 @@
-
+DROP TABLE IF EXISTS staging_names;
 
 CREATE TABLE staging_names (
 	nconst VARCHAR(20),

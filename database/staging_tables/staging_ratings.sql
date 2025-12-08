@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS staging_ratings;
 
 CREATE TABLE staging_ratings (
     tconst              VARCHAR(20),
