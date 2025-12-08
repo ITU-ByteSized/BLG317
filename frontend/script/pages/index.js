@@ -8,6 +8,12 @@ let currentFilter = "all";
 let currentPage = 1;
 let currentSearchQuery = "";
 
+
+function showLoading() {
+    const container = $("#movie-container");
+    container.innerHTML = `<p style="text-align:center; padding:40px; color:#666;">Loading...</p>`;
+}
+
 initNavbar({
     onSearch: (q) => {
         const url = new URL(window.location);
@@ -33,7 +39,6 @@ window.setFilter = (type, btn) => {
 function renderMovies(list) {
     const container = $("#movie-container");
     container.innerHTML = "";
-
     container.classList.remove("top-layout");
 
     if (!list || list.length === 0) {
@@ -47,32 +52,23 @@ function renderMovies(list) {
     });
 }
 
-async function loadHome() {
-    if (currentFilter !== 'all') {
-        await loadSearch();
-        return;
-    }
 
-    try {
-        const data = await apiGetHome();
-        let allItems = [];
-        if (data.movies) allItems = allItems.concat(data.movies);
-        if (data.series) allItems = allItems.concat(data.series);
-        if (data.episodes) allItems = allItems.concat(data.episodes);
-        
-        renderMovies(allItems);
-    } catch (err) {
-        console.error("Home load error:", err);
-    }
+async function loadHome() {
+    currentFilter = 'all'; 
+    await loadSearch();
 }
 
 async function loadSearch() {
+    showLoading();
     try {
+        
         const data = await apiSearchMovies(currentSearchQuery, currentFilter, currentPage);
 
-        renderMovies(data.results || data || []);
+        renderMovies(data.results || []);
+        
         
         const totalPages = data.total_pages || 1;
+        
         
         createPagination({
             containerId: "pagination-wrapper",
@@ -80,12 +76,13 @@ async function loadSearch() {
             totalPages,
             onPageChange: (p) => {
                 currentPage = p;
-                loadSearch();
+                loadSearch(); 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         });
     } catch (err) {
         console.error("Search load error:", err);
+        $("#movie-container").innerHTML = "<p style='text-align:center; color:red;'>Error loading data.</p>";
     }
 }
 

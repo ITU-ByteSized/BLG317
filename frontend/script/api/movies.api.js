@@ -4,8 +4,11 @@ export function apiGetHome() {
     return apiRequest("/movies/home");
 }
 
-export function apiSearchMovies(query = "", type = "all") {
-    let path = `/movies?search=${encodeURIComponent(query)}`;
+
+export function apiSearchMovies(query = "", type = "all", page = 1) {
+    
+    let path = `/movies?search=${encodeURIComponent(query)}&page=${page}&limit=20`; 
+    
     if (type && type !== "all") {
         path += `&type=${encodeURIComponent(type)}`;
     }

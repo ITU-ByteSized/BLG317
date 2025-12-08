@@ -1,4 +1,5 @@
 from backend.app.utils.db_utils import get_db_connection
+from backend.app.config.settings import TYPE_GROUPS
 
 def fetch_home_movies(limit=10):
     conn = get_db_connection()
@@ -30,34 +31,54 @@ def search_movies_db(query, type_filter, limit, offset=0):
     if not conn:
         return [], 0
 
-    base_query = """
-        SELECT p.*, r.average_rating, r.num_votes 
-        FROM productions p 
-        LEFT JOIN ratings r ON p.production_id = r.rating_id
-        WHERE 1=1
-    """
+    conditions = ["1=1"]
     params = []
 
     if query:
-        base_query += " AND p.primary_title LIKE %s"
+        conditions.append("p.primary_title LIKE %s")
         params.append(f"%{query}%")
 
     if type_filter and type_filter != "all":
-        pass 
-
-    base_query += " ORDER BY r.num_votes DESC LIMIT %s OFFSET %s"
-    params.extend([limit, offset])
+        if type_filter in TYPE_GROUPS:
+            types = TYPE_GROUPS[type_filter]
+            placeholders = ",".join(["%s"] * len(types))
+            conditions.append(f"tt.type_name IN ({placeholders})")
+            params.extend(types)
+    
+    where_clause = " AND ".join(conditions)
 
     try:
         cursor = conn.cursor(dictionary=True)
-        cursor.execute(base_query, tuple(params))
+
+        
+        count_sql = f"""
+            SELECT COUNT(*) as total 
+            FROM productions p
+            LEFT JOIN title_types tt ON p.type_id = tt.type_id
+            WHERE {where_clause}
+        """
+        cursor.execute(count_sql, tuple(params))
+        count_result = cursor.fetchone()
+        total_count = count_result['total'] if count_result else 0
+
+       
+        data_sql = f"""
+            SELECT p.*, r.average_rating, r.num_votes 
+            FROM productions p 
+            LEFT JOIN ratings r ON p.production_id = r.rating_id
+            LEFT JOIN title_types tt ON p.type_id = tt.type_id
+            WHERE {where_clause}
+            ORDER BY r.num_votes DESC 
+            LIMIT %s OFFSET %s
+        """
+        
+        final_params = params + [limit, offset]
+        
+        cursor.execute(data_sql, tuple(final_params))
         rows = cursor.fetchall()
         
-        cursor.execute("SELECT FOUND_ROWS()") 
-        
-        total = len(rows)
-        
-        return rows, total
+        return rows, total_count
+
     except Exception as e:
         print(f"Search error: {e}")
         return [], 0
@@ -72,7 +93,6 @@ def fetch_movie_detail_db(production_id):
     try:
         cursor = conn.cursor(dictionary=True)
         
-        
         sql_prod = """
             SELECT p.*, r.average_rating, r.num_votes, tt.type_name as type
             FROM productions p
@@ -86,7 +106,6 @@ def fetch_movie_detail_db(production_id):
         if not movie:
             return None
 
-       
         sql_genres = """
             SELECT g.genre_name 
             FROM production_genres pg 
@@ -97,7 +116,6 @@ def fetch_movie_detail_db(production_id):
         genres = [row['genre_name'] for row in cursor.fetchall()]
         movie['genres'] = genres
 
-       
         sql_cast = """
             SELECT pm.primary_name as name, cm.characters, cm.person_id
             FROM cast_members cm
@@ -109,7 +127,6 @@ def fetch_movie_detail_db(production_id):
         cursor.execute(sql_cast, (production_id,))
         movie['cast'] = cursor.fetchall()
 
-        
         
         sql_alt = """
             SELECT 
@@ -131,5 +148,70 @@ def fetch_movie_detail_db(production_id):
     except Exception as e:
         print(f"Detail error: {e}")
         return None
+    finally:
+        if conn: conn.close()
+
+def fetch_episodes_by_series(parent_id):
+    conn = get_db_connection()
+    if not conn:
+        return []
+
+    sql = """
+        SELECT 
+            e.season_number, 
+            e.episode_number, 
+            p.primary_title, 
+            p.production_id, 
+            p.runtime_minutes, 
+            p.poster_url,
+            r.average_rating, 
+            r.num_votes
+        FROM episodes e
+        JOIN productions p ON e.episode_id = p.production_id
+        LEFT JOIN ratings r ON e.episode_id = r.rating_id
+        WHERE e.parent_id = %s
+        ORDER BY e.season_number ASC, e.episode_number ASC
+    """
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(sql, (parent_id,))
+        rows = cursor.fetchall()
+        return rows
+    except Exception as e:
+        print(f"Fetch episodes error: {e}")
+        return []
+    finally:
+        if conn: conn.close()
+
+def fetch_awards_by_movie(production_id):
+    conn = get_db_connection()
+    if not conn:
+        return []
+
+    sql = """
+        SELECT 
+            a.award_id,
+            ac.category_name, 
+            acer.ceremony_year,
+            a.winner,
+            a.detail,
+            p.primary_title, 
+            p.poster_url,
+            p.production_id
+        FROM awards a
+        JOIN award_categories ac ON a.category_id = ac.category_id
+        JOIN award_ceremonies acer ON a.ceremony_id = acer.ceremony_id
+        JOIN productions p ON a.production_id = p.production_id
+        WHERE a.production_id = %s
+        ORDER BY acer.ceremony_year DESC, ac.category_name ASC
+    """
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(sql, (production_id,))
+        rows = cursor.fetchall()
+        return rows
+    except Exception as e:
+        print(f"Fetch movie awards error: {e}")
+        return []
     finally:
         if conn: conn.close()
