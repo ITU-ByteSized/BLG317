@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS user_watchlist (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    production_id INT NOT NULL,
+    production_id VARCHAR(12) NOT NULL,
     status ENUM('watching', 'completed', 'plan_to_watch', 'dropped') 
         NOT NULL DEFAULT 'plan_to_watch',
     added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS user_watchlist (
 CREATE TABLE IF NOT EXISTS user_ratings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    production_id INT NOT NULL,
+    production_id VARCHAR(12) NOT NULL,
     rating TINYINT UNSIGNED NOT NULL,
     review TEXT,
     rated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

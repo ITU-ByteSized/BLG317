@@ -4,3 +4,4 @@ backend/data_importer.py
 frontend/script/movies.js
 *.pyc
 database/datasets/
+full.txt
