@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile • ByteSizedDB</title>
     <link rel="stylesheet" href="../style/global.css">
-</head>
+    </head>
 <body>
 
     <header></header>
@@ -18,8 +18,21 @@
                 </div>
                 <div class="profile-details">
                     <h1 id="profile-username">Username</h1>
-                    <p id="profile-email" class="profile-email">user@example.com</p>
-                    <div class="profile-stats">
+                    
+                    <div id="profile-location" class="profile-location"></div>
+                    <p id="profile-bio" class="profile-bio"></p>
+
+                    <div class="profile-actions">
+                        <button class="btn-settings" onclick="window.location.href='settings.html'">
+                            ⚙ Settings
+                        </button>
+                        
+                        <button id="btn-admin-panel" class="btn-admin hidden" onclick="window.location.href='admin.html'">
+                            🛡 Admin Panel
+                        </button>
+                    </div>
+
+                    <div class="profile-stats" style="margin-top: 25px;">
                         <div class="stat-item">
                             <span class="stat-value" id="stat-count">0</span>
                             <span class="stat-label">Ratings</span>
@@ -39,7 +52,7 @@
                 <div class="section-line"></div>
             </div>
             <div id="profile-ratings" class="grid-container">
-                </div>
+            </div>
         </section>
     </main>
 

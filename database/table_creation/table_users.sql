@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     city VARCHAR(100) NULL,
     country VARCHAR(100) NULL,
     profile_is_public BOOLEAN NOT NULL DEFAULT 1,
+    is_username_changed BOOLEAN DEFAULT 0,
     total_watch_time_minutes INT UNSIGNED NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
