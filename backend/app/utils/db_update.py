@@ -66,7 +66,7 @@ def update_user_settings(user_id, data):
         updates = []
         params = []
 
-        if "avatar_url" in data:
+        if "avatar_url" in data and data["avatar_url"]:
             updates.append("avatar_url = %s")
             params.append(data["avatar_url"])
 

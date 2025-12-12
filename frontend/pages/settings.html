@@ -14,13 +14,13 @@
         <div class="settings-container">
             <h1>Account Settings</h1>
             
-            <div class="settings-section">
-                <div class="avatar-upload">
-                    <img id="current-avatar" src="https://via.placeholder.com/100" alt="Avatar">
-                    <div class="upload-btn-wrapper">
-                        <button class="btn btn-secondary">Change Photo</button>
-                        <input type="file" id="avatar-input" accept="image/*">
-                    </div>
+            <div class="settings-section avatar-section">
+                <div class="avatar-wrapper">
+                    <img id="current-avatar" src="https://via.placeholder.com/150/111/555?text=User" alt="Avatar">
+                </div>
+                <div class="upload-btn-wrapper">
+                    <button type="button" id="btn-upload-trigger" class="btn btn-secondary">Change Photo</button>
+                    <input type="file" id="avatar-input" accept="image/*" class="hidden">
                 </div>
             </div>
 
@@ -28,7 +28,7 @@
                 <div class="form-group">
                     <label>Username (Changeable once)</label>
                     <input type="text" id="set-username">
-                    <small id="username-warn" style="color:#dba100; display:none;">You have already changed your username once.</small>
+                    <small id="username-warn" class="hidden" style="color: #d29922;">Username has already been changed.</small>
                 </div>
 
                 <div class="form-group">
@@ -40,48 +40,48 @@
                     <div class="form-group">
                         <label>Gender</label>
                         <select id="set-gender">
-                            <option value="">Select...</option>
+                            <option value="">Select Gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Birth Date (Set once)</label>
+                        <label>Birth Date</label>
                         <input type="date" id="set-birthdate">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Bio</label>
-                    <textarea id="set-bio" rows="3"></textarea>
+                    <textarea id="set-bio" rows="3" placeholder="Tell us about yourself..."></textarea>
                 </div>
                 
-                <hr style="border-color:#333; margin: 20px 0;">
+                <hr>
 
                 <div class="form-group checkbox-group">
-                    <label style="display:flex; align-items:center; cursor:pointer;">
+                    <label class="checkbox-label">
                         <input type="checkbox" id="set-public">
-                        <span style="margin-left:10px;">Make Profile Public</span>
+                        Make Profile Public
                     </label>
-                    <small style="color:#777; display:block; margin-top:5px;">
-                        If unchecked, other users will see "{username} profilini gizledi."
-                    </small>
+                    <div class="info-text">
+                        If unchecked, your profile details will be visible only to you.
+                    </div>
                 </div>
 
-                <hr style="border-color:#333; margin: 20px 0;">
+                <hr>
 
                 <h3>Change Password</h3>
                 <div class="form-group">
                     <label>Current Password</label>
-                    <input type="password" id="current-password" placeholder="Required for password change">
+                    <input type="password" id="current-password" placeholder="Required only if changing password">
                 </div>
                 <div class="form-group">
                     <label>New Password</label>
-                    <input type="password" id="new-password">
+                    <input type="password" id="new-password" placeholder="New password">
                 </div>
 
-                <button type="submit" class="btn btn-save" style="width:100%; margin-top:20px;">Save All Changes</button>
+                <button type="submit" class="btn btn-save">Save All Changes</button>
             </form>
             <div id="settings-message" class="message-box"></div>
         </div>
