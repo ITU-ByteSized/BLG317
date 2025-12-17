@@ -13,14 +13,61 @@
     <header></header>
 
     <div class="filter-bar">
-        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
-        <button class="filter-btn" onclick="setFilter('movie', this)">Movies</button>
-        <button class="filter-btn" onclick="setFilter('tvSeries', this)">TV Series</button>
-        <button class="filter-btn" onclick="setFilter('tvEpisode', this)">Episodes</button>
+        <div class="filter-group">
+            <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+            <button class="filter-btn" onclick="setFilter('movie', this)">Movies</button>
+            <button class="filter-btn" onclick="setFilter('tvSeries', this)">TV Series</button>
+            <button class="filter-btn" onclick="setFilter('tvEpisode', this)">Episodes</button>
+        </div>
+        
+        <button id="btn-open-filter" class="filter-btn special-filter">
+            <span>⚙</span> Filter
+        </button>
     </div>
 
     <div id="movie-container" class="grid-container"></div>
-    <div id="movie-container" class="grid-container"></div>
     <div id="pagination-wrapper" class="pagination-container"></div>
+
+    <div id="filter-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Advanced Filters</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select id="filter-genre">
+                        <option value="all">All Genres</option>
+                        <option value="Action">Action</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                        <option value="Horror">Horror</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Thriller">Thriller</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Year From</label>
+                        <input type="number" id="filter-year-min" placeholder="1990">
+                    </div>
+                    <div class="form-group">
+                        <label>Year To</label>
+                        <input type="number" id="filter-year-max" placeholder="2025">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Min Rating (0-10)</label>
+                    <input type="number" id="filter-rating" min="0" max="10" step="0.1" placeholder="7.5">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-apply-filter" class="btn btn-signup">Apply Filters</button>
+                <button id="btn-clear-filter" class="btn btn-login">Clear</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

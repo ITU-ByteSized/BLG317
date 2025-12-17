@@ -26,7 +26,7 @@ def fetch_home_movies(limit=10):
     finally:
         if conn: conn.close()
 
-def search_movies_db(query, type_filter, limit, offset=0):
+def search_movies_db(query, type_filter, limit, offset=0, min_year=None, max_year=None, min_rating=None, genre=None):
     conn = get_db_connection()
     if not conn:
         return [], 0
@@ -45,25 +45,47 @@ def search_movies_db(query, type_filter, limit, offset=0):
             conditions.append(f"tt.type_name IN ({placeholders})")
             params.extend(types)
     
+    if min_year:
+        conditions.append("p.start_year >= %s")
+        params.append(min_year)
+    
+    if max_year:
+        conditions.append("p.start_year <= %s")
+        params.append(max_year)
+
+    if min_rating:
+        conditions.append("r.average_rating >= %s")
+        params.append(min_rating)
+
+    if genre and genre != "all":
+        conditions.append("""
+            p.production_id IN (
+                SELECT pg.production_id 
+                FROM production_genres pg 
+                JOIN genres g ON pg.genre_id = g.genre_id 
+                WHERE g.genre_name = %s
+            )
+        """)
+        params.append(genre)
+    
     where_clause = " AND ".join(conditions)
 
     try:
         cursor = conn.cursor(dictionary=True)
 
-        
         count_sql = f"""
             SELECT COUNT(*) as total 
             FROM productions p
             LEFT JOIN title_types tt ON p.type_id = tt.type_id
+            LEFT JOIN ratings r ON p.production_id = r.rating_id
             WHERE {where_clause}
         """
         cursor.execute(count_sql, tuple(params))
         count_result = cursor.fetchone()
         total_count = count_result['total'] if count_result else 0
 
-       
         data_sql = f"""
-            SELECT p.*, r.average_rating, r.num_votes 
+            SELECT p.*, r.average_rating, r.num_votes, tt.type_name as type
             FROM productions p 
             LEFT JOIN ratings r ON p.production_id = r.rating_id
             LEFT JOIN title_types tt ON p.type_id = tt.type_id
@@ -127,7 +149,6 @@ def fetch_movie_detail_db(production_id):
         cursor.execute(sql_cast, (production_id,))
         movie['cast'] = cursor.fetchall()
 
-        
         sql_alt = """
             SELECT 
                 a.localized_title, 

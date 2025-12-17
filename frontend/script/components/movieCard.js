@@ -17,15 +17,14 @@ export function createMovieCard(movie) {
     const formattedTime = formatRuntime(movie.runtime_minutes);
     const ratingValue = movie.average_rating ? movie.average_rating : "-";
 
-    let typeBadge = "";
-    if (movie.type && movie.type.toLowerCase() !== "movie") {
-        let displayType = movie.type;
-        if (movie.type === "tvSeries") displayType = "TV Series";
-        if (movie.type === "tvMiniSeries") displayType = "Mini Series";
-        if (movie.type === "tvEpisode") displayType = "Episode";
+    let displayType = movie.type || "Movie";
+    
+    if (displayType === "tvSeries") displayType = "TV Series";
+    if (displayType === "tvMiniSeries") displayType = "Mini Series";
+    if (displayType === "tvEpisode") displayType = "Episode";
+    if (displayType === "movie" || displayType === "tvMovie") displayType = "Movie";
 
-        typeBadge = `<div class="type-pill">${displayType}</div>`;
-    }
+    const typeBadge = `<div class="type-pill">${displayType}</div>`;
 
     card.innerHTML = `
         <img 
