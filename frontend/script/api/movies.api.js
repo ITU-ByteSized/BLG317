@@ -25,3 +25,11 @@ export function apiRateMovie(id, rating) {
         body: JSON.stringify({ rating })
     });
 }
+
+export function apiGetMovieEpisodes(id) {
+    return apiRequest(`/movies/${encodeURIComponent(id)}/episodes`);
+}
+
+export function apiGetMovieAwards(id) {
+    return apiRequest(`/movies/${encodeURIComponent(id)}/awards`);
+}

@@ -77,7 +77,7 @@ def get_person(person_id):
 
         # Simple filmography: recent productions from cast_members
         sql_filmography = """
-            SELECT p.production_id, p.primary_title, p.start_year, cm.job_id, j.name AS job_name
+            SELECT p.production_id, p.primary_title, p.start_year, cm.job_id, j.job_name AS job_name
             FROM cast_members cm
             JOIN productions p ON cm.production_id = p.production_id
             LEFT JOIN jobs j ON cm.job_id = j.job_id

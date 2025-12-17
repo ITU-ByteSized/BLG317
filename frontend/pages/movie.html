@@ -55,6 +55,36 @@
             </section>
         </div>
 
+        <div id="section-alt" class="tab-content hidden">
+            <section class="movie-section" style="margin-top: 20px;">
+                <div class="table-responsive">
+                    <table class="alt-table" style="width: 100%; text-align: left; border-collapse: collapse; color: #ccc;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #333; color: var(--accent-color);">
+                                <th style="padding: 10px;">Region</th>
+                                <th style="padding: 10px;">Language</th>
+                                <th style="padding: 10px;">Title</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movie-alt-list"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <div id="section-episodes" class="tab-content hidden">
+            <section class="movie-section" style="margin-top: 20px;">
+                <div id="season-tabs" class="season-tabs" style="display:flex; gap:10px; margin-bottom:20px; overflow-x:auto;"></div>
+                <div id="movie-episodes-list" class="episode-list-simple"></div>
+            </section>
+        </div>
+
+        <div id="section-awards" class="tab-content hidden">
+            <section class="movie-section" style="margin-top: 20px;">
+                <div id="movie-awards-list" class="awards-grid"></div> 
+            </section>
+        </div>
+
     </main>
 
     <script type="module" src="../script/pages/movie.js"></script>
