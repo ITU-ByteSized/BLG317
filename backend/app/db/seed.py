@@ -1,13 +1,14 @@
 import os
 import time
+import csv
 import mysql.connector
-from backend.app.config import settings
 from backend.app.db.connection import get_db_connection
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 TABLES_DIR = os.path.join(BASE_DIR, "database", "table_creation")
-STAGING_DIR = os.path.join(BASE_DIR, "database", "staging_tables")
-DATA_DIR = os.path.join(BASE_DIR, "database", "data_insertion")
+potential_dirs = ["dataset", "datasets"]
+DATASET_FOLDER = next((d for d in potential_dirs if os.path.exists(os.path.join(BASE_DIR, "database", d))), "datasets")
+DATASET_PATH = os.path.join(BASE_DIR, "database", DATASET_FOLDER)
 
 TABLE_FILES = [
     "table_users.sql", "table_regions.sql", "table_languages.sql",
@@ -20,119 +21,90 @@ TABLE_FILES = [
     "table_awards.sql", "table_award_nominees.sql"
 ]
 
+INSERTION_ORDER = [
+    "regions", "languages", "title_types", "genres", "jobs", "categories", 
+    "professions", "award_ceremonies", "award_categories", "people", 
+    "productions", "users", "episodes", "ratings", "alt_titles", 
+    "production_genres", "person_professions", "cast_members", 
+    "directors", "writers", "awards", "award_nominees"
+]
+
+def clear_tables(cursor):
+    tables_to_clear = list(reversed(INSERTION_ORDER))
+    print("\n--- Cleaning existing data ---")
+    cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+    for table in tables_to_clear:
+        try:
+            cursor.execute(f"TRUNCATE TABLE {table};")
+            print(f"  Truncated: {table}")
+        except Exception as e:
+            print(f"  [INFO] Could not truncate {table}: {e}")
+    cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+
+def get_table_columns(cursor, table_name):
+    cursor.execute(f"DESCRIBE {table_name}")
+    return [column[0] for column in cursor.fetchall()]
+
+def load_csv_smart(cursor, conn):
+    print(f"\n--- Loading Data (Smart Mapping Mode from: {DATASET_FOLDER}) ---")
+    for table_name in INSERTION_ORDER:
+        file_path = os.path.join(DATASET_PATH, f"{table_name}.csv")
+        if not os.path.exists(file_path):
+            continue
+        print(f"Processing: {table_name}.csv...")
+        try:
+            table_cols = get_table_columns(cursor, table_name)
+            with open(file_path, mode='r', encoding='utf-8') as f:
+                sample = f.read(2048)
+                f.seek(0)
+                dialect = csv.Sniffer().sniff(sample, delimiters=',;')
+                reader = csv.DictReader(f, dialect=dialect, skipinitialspace=True)
+                rows_to_insert = []
+                for row in reader:
+                    filtered_row = {k: (v if v.strip() != "" else None) for k, v in row.items() if k in table_cols}
+                    full_row = [filtered_row.get(col) for col in table_cols]
+                    rows_to_insert.append(full_row)
+                if rows_to_insert:
+                    placeholders = ", ".join(["%s"] * len(table_cols))
+                    columns_str = ", ".join(table_cols)
+                    insert_query = f"INSERT IGNORE INTO {table_name} ({columns_str}) VALUES ({placeholders})"
+                    cursor.executemany(insert_query, rows_to_insert)
+                    print(f"  -> Success: {cursor.rowcount} rows added to {table_name}")
+        except Exception as e:
+            print(f"  -> [SKIP] Error processing {table_name}: {e}")
+
 def run_sql_file(cursor, file_path):
-    if not os.path.exists(file_path):
-        print(f"[WARNING] File not found: {file_path}")
-        return
-
-    print(f"Processing: {os.path.basename(file_path)}...")
+    if not os.path.exists(file_path): return
     with open(file_path, "r", encoding="utf-8") as f:
-        sql_content = f.read()
-
-    commands = sql_content.split(';')
-    for command in commands:
-        cleaned_command = command.strip()
-        if cleaned_command:
-            try:
-                cursor.execute(cleaned_command)
-            except mysql.connector.Error as err:
-                print(f"  -> [ERROR] Query failed: {err}")
-
-def set_session_options(cursor, enable):
-    if enable:
-        statements = [
-            "SET FOREIGN_KEY_CHECKS=1",
-            "SET UNIQUE_CHECKS=1",
-            "SET SQL_LOG_BIN=1"
-        ]
-    else:
-        statements = [
-            "SET FOREIGN_KEY_CHECKS=0",
-            "SET UNIQUE_CHECKS=0",
-            "SET SQL_LOG_BIN=0"
-        ]
-
-    for stmt in statements:
-        try:
-            cursor.execute(stmt + ";")
-        except mysql.connector.Error as err:
-            print(f"[INFO] Session option skipped ({stmt}): {err}")
-
-def drop_staging_tables(cursor):
-    tables = [
-        "staging_akas",
-        "staging_basics",
-        "staging_crew",
-        "staging_episodes",
-        "staging_names",
-        "staging_oscars",
-        "staging_principals",
-        "staging_ratings",
-    ]
-    print("\n--- Dropping staging tables ---")
-    for t in tables:
-        try:
-            cursor.execute(f"DROP TABLE IF EXISTS {t};")
-            print(f"  Dropped: {t}")
-        except mysql.connector.Error as err:
-            print(f"[INFO] Could not drop {t}: {err}")
+        content = f.read()
+        for cmd in content.split(';'):
+            if cmd.strip(): cursor.execute(cmd)
 
 def apply_seed():
     start_time = time.time()
-    print("--- Database Setup Started ---")
-
-    db_conn = get_db_connection()
-    if not db_conn:
-        print("Could not connect to database.")
-        return
-
-    cursor = db_conn.cursor()
-
+    conn = get_db_connection()
+    if not conn: return
+    cursor = conn.cursor()
     try:
-        print("\n--- Optimizing System Settings ---")
-        set_session_options(cursor, enable=False)
+        cursor.execute("SET FOREIGN_KEY_CHECKS=0;")
+        
+        print("\n--- 1. Creating Table Schemas ---")
+        for f in TABLE_FILES:
+            run_sql_file(cursor, os.path.join(TABLES_DIR, f))
 
-        print("\n--- 1. Creating Main Tables ---")
-        for file_name in TABLE_FILES:
-            run_sql_file(cursor, os.path.join(TABLES_DIR, file_name))
+        clear_tables(cursor)
 
-        print(f"\n--- 2. Setting up Staging Tables from: {os.path.basename(STAGING_DIR)} ---")
-        if os.path.exists(STAGING_DIR):
-            files = sorted([f for f in os.listdir(STAGING_DIR) if f.endswith('.sql')])
-            for file_name in files:
-                run_sql_file(cursor, os.path.join(STAGING_DIR, file_name))
+        load_csv_smart(cursor, conn)
 
-        print(f"\n--- 3. Inserting Data: {os.path.basename(DATA_DIR)} ---")
-        if os.path.exists(DATA_DIR):
-            files = sorted([f for f in os.listdir(DATA_DIR) if f.endswith('.sql')])
-            for file_name in files:
-                run_sql_file(cursor, os.path.join(DATA_DIR, file_name))
-                
-        print("\n--- Dropping Staging Tables... ---")
-        drop_staging_tables(cursor)
-
-        print("\n--- Committing Changes to Disk... ---")
-        db_conn.commit()
-
-        elapsed = time.time() - start_time
-        print(f"\n--- Setup Completed Successfully! (Time: {elapsed:.2f}s) ---")
-
+        conn.commit()
+        print(f"\n--- Setup Completed! (Time: {time.time() - start_time:.2f}s) ---")
     except Exception as e:
         print(f"\n[CRITICAL ERROR]: {e}")
-        print("Rolling back operations...")
-        try:
-            db_conn.rollback()
-        except Exception as roll_err:
-            print(f"[ROLLBACK ERROR]: {roll_err}")
+        conn.rollback()
     finally:
-        try:
-            set_session_options(cursor, enable=True)
-        except Exception as err:
-            print(f"[INFO] Could not restore session options: {err}")
-        if cursor:
-            cursor.close()
-        if db_conn:
-            db_conn.close()
+        cursor.execute("SET FOREIGN_KEY_CHECKS=1;")
+        cursor.close()
+        conn.close()
 
 if __name__ == "__main__":
     apply_seed()

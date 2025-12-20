@@ -209,23 +209,20 @@ def fetch_awards_by_movie(production_id):
     if not conn:
         return []
 
-    sql = """
-        SELECT 
-            a.award_id,
-            ac.category_name, 
-            acer.ceremony_year,
-            a.winner,
-            a.detail,
-            p.primary_title, 
-            p.poster_url,
-            p.production_id
-        FROM awards a
-        JOIN award_categories ac ON a.category_id = ac.category_id
-        JOIN award_ceremonies acer ON a.ceremony_id = acer.ceremony_id
-        JOIN productions p ON a.production_id = p.production_id
-        WHERE a.production_id = %s
-        ORDER BY acer.ceremony_year DESC, ac.category_name ASC
+    sql_alt = """
+    SELECT 
+        a.localized_title, 
+        COALESCE(r.region_name, a.region_code, '-') as region_name,
+        COALESCE(l.language_name, a.language_code, '-') as language_name,
+        a.types,
+        a.is_original_title
+    FROM alt_titles a
+    LEFT JOIN regions r ON a.region_code = r.region_code
+    LEFT JOIN languages l ON a.language_code = l.language_code
+    WHERE a.production_id = %s
+    ORDER BY a.ordering ASC
     """
+    
     try:
         cursor = conn.cursor(dictionary=True)
         cursor.execute(sql, (production_id,))
@@ -233,6 +230,20 @@ def fetch_awards_by_movie(production_id):
         return rows
     except Exception as e:
         print(f"Fetch movie awards error: {e}")
+        return []
+    finally:
+        if conn: conn.close()
+
+def fetch_all_genres():
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT genre_id, genre_name FROM genres ORDER BY genre_name ASC")
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Fetch genres error: {e}")
         return []
     finally:
         if conn: conn.close()

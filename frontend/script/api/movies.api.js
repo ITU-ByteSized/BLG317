@@ -33,3 +33,7 @@ export function apiGetMovieEpisodes(id) {
 export function apiGetMovieAwards(id) {
     return apiRequest(`/movies/${encodeURIComponent(id)}/awards`);
 }
+
+export function apiGetAllGenres() {
+    return apiRequest("/genres");
+}

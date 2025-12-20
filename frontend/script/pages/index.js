@@ -2,6 +2,7 @@ import { initNavbar } from "../components/navbar.js";
 import { createMovieCard } from "../components/movieCard.js";
 import { createPagination } from "../components/pagination.js";
 import { apiRequest } from "../api/request.js";
+import { apiGetAllGenres } from "../api/movies.api.js";
 import { $ } from "../utils/dom.js";
 
 let currentFilter = "all";
@@ -14,6 +15,23 @@ let filterState = {
     maxYear: "",
     minRating: ""
 };
+
+async function populateGenres() {
+    const genreSelect = document.getElementById("filter-genre");
+    if (!genreSelect) return;
+
+    try {
+        const genres = await apiGetAllGenres();
+        genres.forEach(g => {
+            const option = document.createElement("option");
+            option.value = g.genre_name;
+            option.textContent = g.genre_name;
+            genreSelect.appendChild(option);
+        });
+    } catch (err) {
+        console.error("Genres could not be loaded:", err);
+    }
+}
 
 function showLoading() {
     const container = $("#movie-container");
@@ -100,6 +118,9 @@ async function loadSearch() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    
+    populateGenres();
+
     const urlParams = new URLSearchParams(window.location.search);
     const searchParam = urlParams.get('search');
 
