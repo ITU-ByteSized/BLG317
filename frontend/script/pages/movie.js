@@ -72,6 +72,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (overviewEl) overviewEl.innerHTML = "<span style='color:#888'>Loading details...</span>";
 
     let currentMovie = null;
+    const user = getUser();
+    const userId = user ? user.user_id : null;
 
     const allTabs = [btnComments, btnCast, btnCrew, btnAlt, btnEp, btnAwards];
     const allSections = [sectionComments, sectionCast, sectionCrew, sectionAlt, sectionEp, sectionAwards];
@@ -84,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     try {
-        const data = await apiGetMovieById(id);
+        const data = await apiGetMovieById(id, userId);
         const movie = data.movie || data;
         currentMovie = movie;
 
@@ -183,7 +185,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         await loadComments(id);
 
-        if (starsBox) initUserRatingStars(starsBox, hintEl, id);
+        if (starsBox){
+            const userRating = movie.user_rating || 0;
+            initUserRatingStars(starsBox, hintEl, id, userRating);
+        }
 
     } catch (err) {
         console.error("Movie load error:", err);
@@ -612,42 +617,61 @@ function renderMovieAwards(awards, container) {
 
 function initUserRatingStars(container, hintEl, movieId) {
     container.innerHTML = "";
+    let currentRating = initialRating;
+
+    if (currentRating > 0 && hintEl) {
+        hintEl.textContent = `Your Rating: ${currentRating}/10`;
+        hintEl.style.color = "var(--accent-color)";
+    }
+
     for (let i = 1; i <= 10; i++) {
         const span = document.createElement("span");
         span.className = "rating-star-ui";
         span.innerHTML = "★";
 
+        if (i <= currentRating) {
+            span.classList.add("active");
+        }
+        
         span.addEventListener("mouseenter", () => {
             updateStarsUI(container, i);
             if (hintEl) hintEl.textContent = `Rate: ${i}/10`;
         });
 
         span.addEventListener("mouseleave", () => {
-            updateStarsUI(container, 0);
-            if (hintEl) hintEl.textContent = "";
+            updateStarsUI(container, currentRating);
+            if (hintEl) {
+                if (currentRating > 0) {
+                    hintEl.textContent = `Your rating: ${currentRating}/10`;
+                } else {
+                    hintEl.textContent = "";
+                }
+            }
         });
 
         span.addEventListener("click", async () => {
-            const user = getUser();
-            if (!user) {
-                alert("Please login to rate movies.");
+            const currentUser = getUser();
+            if (!currentUser) {
+                alert("Please login to rate.");
                 return;
             }
-
             try {
-                const res = await apiRequest(`/movies/${movieId}/rate`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: user.user_id, rating: i })
+                await apiRequest(`/movies/${movieId}/rate`, {
+                    method: "POST",
+                    body: JSON.stringify({ user_id: currentUser.user_id, rating: i })
                 });
 
-                if (res && res.success === false) throw new Error(res.message || "Rate failed");
-                alert(`You rated this movie ${i}/10!`);
-            } catch (err) {
-                console.error("RATE_FAIL:", err);
-                alert(err?.message || "Error saving rating.");
+                currentRating = i;
+                updateStarsUI(container, currentRating);
+                if (hintEl) hintEl.textContent = `Your rating: ${currentRating}/10`;
+                
+                alert(`You rated this ${i}/10!`);
+            } catch (e) {
+                console.error(e);
+                alert("Rating failed.");
             }
-            });
+        });
+        
         container.appendChild(span);
     }
 }
