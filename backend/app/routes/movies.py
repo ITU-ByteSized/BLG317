@@ -65,8 +65,8 @@ def api_episodes(production_id):
     data = fetch_episodes_by_series(production_id)
     return jsonify(data)
 
-@bp.route("/<id>/rate", methods=["POST"])
-def rate_movie(id):
+@bp.route("/movies/<production_id>/rate", methods=["POST"])
+def rate_movie(production_id):
     data = request.get_json()
     user_id = data.get("user_id")
     rating = data.get("rating")
@@ -75,18 +75,58 @@ def rate_movie(id):
         return jsonify({"error": "Missing user_id or rating"}), 400
 
     conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Database connection error"}), 500
+    
     try:
-        cursor = conn.cursor()
-        sql = """
+        cursor = conn.cursor(dictionary=True)
+        check_sql = "SELECT rating FROM user_ratings WHERE user_id = %s AND production_id = %s"
+        cursor.execute(check_sql, (user_id, production_id))
+        existing_vote = cursor.fetchone()
+        
+        previous_rating = existing_vote['rating'] if existing_vote else None
+        
+        upsert_sql = """
             INSERT INTO user_ratings (user_id, production_id, rating)
             VALUES (%s, %s, %s)
             ON DUPLICATE KEY UPDATE rating = VALUES(rating), rated_at = CURRENT_TIMESTAMP
         """
-        cursor.execute(sql, (user_id, id, rating))
+        cursor.execute(upsert_sql, (user_id, production_id, rating))
+        
+        stats_sql = "SELECT average_rating, num_votes FROM ratings WHERE rating_id = %s"
+        cursor.execute(stats_sql, (production_id,))
+        stats = cursor.fetchone()
+        
+        current_rating_val = float(rating)
+
+        if stats:
+            curr_avg = float(stats['average_rating'])
+            curr_votes = int(stats['num_votes'])
+
+            current_total_score = curr_avg * curr_votes
+
+            if previous_rating is not None:
+                new_total_score = current_total_score - float(previous_rating) + current_rating_val
+                new_votes = curr_votes
+            else:
+                new_total_score = current_total_score + current_rating_val
+                new_votes = curr_votes + 1   
+                
+            new_avg = new_total_score / new_votes if new_votes > 0 else 0.0
+            
+            update_sql = "UPDATE ratings SET average_rating = %s, num_votes = %s WHERE rating_id = %s"
+            cursor.execute(update_sql, (new_avg, new_votes, production_id))
+
+        else:
+            insert_sql = "INSERT INTO ratings (rating_id, average_rating, num_votes) VALUES (%s, %s, 1)"
+            cursor.execute(insert_sql, (production_id, current_rating_val))
+            
         conn.commit()
         
         return jsonify({"success": True, "message": "Rating saved"})
     except Exception as e:
+        if conn:
+            conn.rollback()
         print(f"Rating error: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
