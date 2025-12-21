@@ -40,7 +40,6 @@ def search_movies_db(query, type_filter, limit, offset=0, min_year=None, max_yea
 
     if type_filter and type_filter != "all":
         tf_lower = type_filter.lower()
-        
         if tf_lower in TYPE_GROUPS:
             types = TYPE_GROUPS[tf_lower]
             placeholders = ",".join(["%s"] * len(types))
@@ -241,21 +240,21 @@ def fetch_awards_by_movie(production_id):
         return []
 
     sql = """
-        SELECT 
-            a.award_id,
-            ac.category_name, 
-            acer.ceremony_year,
-            a.winner,
-            a.detail,
-            p.primary_title, 
-            p.poster_url,
-            p.production_id
-        FROM awards a
-        JOIN award_categories ac ON a.category_id = ac.category_id
-        JOIN award_ceremonies acer ON a.ceremony_id = acer.ceremony_id
-        JOIN productions p ON a.production_id = p.production_id
-        WHERE a.production_id = %s
-        ORDER BY acer.ceremony_year DESC, ac.category_name ASC
+    SELECT 
+        a.award_id,
+        ac.category_name, 
+        acer.ceremony_year,
+        a.winner,
+        a.detail,
+        p.primary_title, 
+        p.poster_url,
+        p.production_id
+    FROM awards a
+    JOIN award_categories ac ON a.category_id = ac.category_id
+    JOIN award_ceremonies acer ON a.ceremony_id = acer.ceremony_id
+    JOIN productions p ON a.production_id = p.production_id
+    WHERE a.production_id = %s
+    ORDER BY acer.ceremony_year DESC, ac.category_name ASC
     """
     try:
         cursor = conn.cursor(dictionary=True)
@@ -264,6 +263,20 @@ def fetch_awards_by_movie(production_id):
         return rows
     except Exception as e:
         print(f"Fetch movie awards error: {e}")
+        return []
+    finally:
+        if conn: conn.close()
+
+def fetch_all_genres():
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT genre_id, genre_name FROM genres ORDER BY genre_name ASC")
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Fetch genres error: {e}")
         return []
     finally:
         if conn: conn.close()
