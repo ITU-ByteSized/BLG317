@@ -36,14 +36,36 @@
         </section>
         
         <div class="movie-nav-container">
-            <button id="btn-cast" class="nav-tab-btn active">Top Cast</button>
+            <button id="btn-comments" class="nav-tab-btn active">Comments</button>
+            <button id="btn-cast" class="nav-tab-btn">Top Cast</button>
             <button id="btn-crew" class="nav-tab-btn">Crew</button>
             <button id="btn-alt-titles" class="nav-tab-btn">Alternative Titles</button>
             <button id="btn-episodes" class="nav-tab-btn">Episodes</button>
             <button id="btn-awards" class="nav-tab-btn">Awards</button>
         </div>
 
-        <div id="section-cast" class="tab-content">
+        <div id="section-comments" class="tab-content">
+            <section class="movie-section" style="margin-top: 20px; max-width: 800px;">
+                
+                <div class="comment-input-area">
+                    <div class="comment-warning">
+                        Do not make spoilers in your comments without using the "Spoiler" button. Do not request new productions in comments.
+                    </div>
+                    <div class="textarea-wrapper">
+                        <textarea id="comment-text" placeholder="Write your comment..."></textarea>
+                    </div>
+                    <div class="comment-actions">
+                        <button id="btn-spoiler-toggle" class="btn-spoiler">Spoiler</button>
+                        <button id="btn-submit-comment" class="btn-submit">Submit Comment</button>
+                    </div>
+                </div>
+
+                <div id="comments-list" class="comments-list">
+                    </div>
+            </section>
+        </div>
+
+        <div id="section-cast" class="tab-content hidden">
             <section class="movie-section" style="margin-top: 20px;">
                 <div id="movie-cast" class="person-list"></div>
             </section>
@@ -57,6 +79,10 @@
 
         <div id="section-alt" class="tab-content hidden">
             <section class="movie-section" style="margin-top: 20px;">
+                <div style="margin-bottom: 15px;">
+                    <input type="text" id="alt-search-input" placeholder="Filter by language or region..." 
+                           style="width: 100%; max-width: 300px; padding: 8px; border-radius: 4px; border: 1px solid #333; background: #1a1a1a; color: white;">
+                </div>
                 <div class="table-responsive">
                     <table class="alt-table" style="width: 100%; text-align: left; border-collapse: collapse; color: #ccc;">
                         <thead>
@@ -86,6 +112,19 @@
         </div>
 
     </main>
+
+    <div id="spoiler-modal" class="modal hidden">
+        <div class="modal-content" style="border: 1px solid #555;">
+            <div class="modal-body" style="padding-top: 10px;">
+                <label style="color:#ccc; margin-bottom:10px; display:block;">Please enter the spoiler content in this area.</label>
+                <textarea id="spoiler-input" rows="3" style="width:100%; background:#000; color:#fff; border:1px solid #444; border-radius:4px; padding:10px;"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-spoiler-confirm" class="btn btn-signup" style="background:#aab0ff; color:#000;">OK</button>
+                <button id="btn-spoiler-cancel" class="close-modal-btn btn btn-login">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module" src="../script/pages/movie.js"></script>
 </body>

@@ -298,3 +298,193 @@
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+.comment-input-area {
+    background-color: #121212;
+    border: 1px solid #333;
+    padding: 0;
+    border-radius: 4px;
+    margin-bottom: 30px;
+}
+
+.comment-warning {
+    color: #888;
+    font-size: 0.75rem;
+    padding: 10px;
+    border-bottom: 1px solid #222;
+}
+
+.textarea-wrapper {
+    padding: 10px;
+}
+
+#comment-text {
+    width: 100%;
+    min-height: 80px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: inherit;
+    resize: vertical;
+}
+
+#comment-text:focus {
+    outline: none;
+}
+
+.comment-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border-top: 1px solid #222;
+}
+
+.btn-spoiler {
+    background-color: #00c4a7;
+    color: #fff;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-submit {
+    background-color: #2ea4e6;
+    color: #fff;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.comment-item {
+    display: flex;
+    gap: 15px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #222;
+}
+
+.comment-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    background-size: cover;
+    flex-shrink: 0;
+}
+
+.comment-body {
+    flex: 1;
+}
+
+.comment-header {
+    margin-bottom: 6px;
+}
+
+.comment-user {
+    color: #ccc;
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin-right: 8px;
+}
+
+.comment-date {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.comment-content {
+    color: #ddd;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.spoiler-block {
+    margin: 5px 0;
+}
+
+.spoiler-hidden {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    padding: 10px;
+    color: #3f8ad6;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.spoiler-visible {
+    background-color: #222;
+    padding: 10px;
+    border-left: 3px solid #f00;
+    color: #ccc;
+    animation: fadeIn 0.3s ease;
+}
+
+.comment-footer {
+    margin-top: 10px;
+    display: flex;
+    gap: 15px;
+}
+
+.btn-reply, .btn-like {
+    background: #222;
+    border: 1px solid #333;
+    color: #aaa;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-reply:hover, .btn-like:hover {
+    background: #333;
+    color: #fff;
+}
+
+.replies-container {
+    margin-top: 15px;
+    padding-left: 20px;
+    border-left: 2px solid #333;
+}
+
+.spoiler-wrapper {
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.spoiler-cover {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    padding: 10px;
+    color: #3f8ad6;
+    border-radius: 4px;
+    font-weight: 500;
+    display: block;
+}
+
+.spoiler-content {
+    background-color: #222;
+    padding: 10px;
+    border-left: 3px solid #f00;
+    color: #ccc;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.btn-like.liked {
+    color: #3f8ad6;
+    border-color: #3f8ad6;
+}

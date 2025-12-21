@@ -148,6 +148,35 @@ def fetch_movie_detail_db(production_id):
         """
         cursor.execute(sql_cast, (production_id,))
         movie['cast'] = cursor.fetchall()
+        
+        sql_directors = """
+            SELECT p.person_id, p.primary_name as name, 'Director' as job
+            FROM directors d
+            JOIN people p ON d.person_id = p.person_id
+            WHERE d.production_id = %s
+        """
+        cursor.execute(sql_directors, (production_id,))
+        directors = cursor.fetchall()
+
+        sql_writers = """
+            SELECT p.person_id, p.primary_name as name, 'Writer' as job
+            FROM writers w
+            JOIN people p ON w.person_id = p.person_id
+            WHERE w.production_id = %s
+        """
+        cursor.execute(sql_writers, (production_id,))
+        writers = cursor.fetchall()
+
+        sql_other_crew = """
+             SELECT pm.primary_name as name, j.job_name as job, cm.person_id
+             FROM cast_members cm
+             JOIN people pm ON cm.person_id = pm.person_id
+             JOIN jobs j ON cm.job_id = j.job_id
+             WHERE cm.production_id = %s
+        """
+        cursor.execute(sql_other_crew, (production_id,))
+        other_crew = cursor.fetchall()
+        movie['crew'] = directors + writers + other_crew
 
         sql_alt = """
             SELECT 
