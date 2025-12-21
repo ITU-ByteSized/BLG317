@@ -15,12 +15,8 @@ export function apiSearchMovies(query = "", type = "all", page = 1) {
     return apiRequest(path);
 }
 
-export async function apiGetMovieById(id, user_id = null) {
-    let url = `${API_BASE_URL}/movies/${encodeURIComponent(id)}`;
-    if (user_id) {
-        url += `?user_id=${encodeURIComponent(user_id)}`;
-    }
-    return await apiRequest(url);
+export function apiGetMovieById(id) {
+    return apiRequest(`/movies/${encodeURIComponent(id)}`);
 }
 
 export function apiRateMovie(id, rating) {

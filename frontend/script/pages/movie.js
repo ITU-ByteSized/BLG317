@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     try {
-        const data = await apiGetMovieById(id, userId);
+        const data = await apiGetMovieById(id);
         const movie = data.movie || data;
         currentMovie = movie;
 
@@ -615,7 +615,7 @@ function renderMovieAwards(awards, container) {
     });
 }
 
-function initUserRatingStars(container, hintEl, movieId) {
+function initUserRatingStars(container, hintEl, movieId, initialRating) {
     container.innerHTML = "";
     let currentRating = initialRating;
 
@@ -641,7 +641,7 @@ function initUserRatingStars(container, hintEl, movieId) {
         span.addEventListener("mouseleave", () => {
             updateStarsUI(container, currentRating);
             if (hintEl) {
-                if (currentRating > 0) {
+                if (currentRating > -1) {
                     hintEl.textContent = `Your rating: ${currentRating}/10`;
                 } else {
                     hintEl.textContent = "";
