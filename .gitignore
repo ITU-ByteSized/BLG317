@@ -6,3 +6,4 @@ frontend/script/movies.js
 database/datasets/
 full.txt
 backend/static
+exports/
