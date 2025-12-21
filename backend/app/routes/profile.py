@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, jsonify, request, send_from_directory
+from flask import Blueprint, jsonify, request
 from backend.app.utils.db_utils import get_db_connection
 from backend.app.utils.db_update import update_user_settings
 from werkzeug.utils import secure_filename
@@ -25,7 +25,10 @@ def upload_avatar():
         return jsonify({"error": "No selected file"}), 400
     
     if file and allowed_file(file.filename):
-        filename = secure_filename(f"avatar_{file.filename}")
+        import uuid
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        filename = secure_filename(f"avatar_{uuid.uuid4().hex[:8]}.{ext}")
+        
         save_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(save_path)
         
@@ -67,7 +70,7 @@ def get_profile_me():
                 "username": user["username"],
                 "avatar_url": user["avatar_url"],
                 "is_private": True,
-                "message": f"{user['username']} profilini gizledi."
+                "message": f"{user['username']} is updated"
             })
 
         stats = {"total_ratings": 0}
@@ -94,8 +97,6 @@ def get_profile_me():
         return jsonify({"error": "Internal error"}), 500
     finally:
         if conn: conn.close()
-    
-    return jsonify({"error": "Not implemented here for brevity"}), 501
 
 @bp.route("/profile/update", methods=["PUT"])
 def update_profile():
@@ -120,5 +121,7 @@ def update_profile():
             return jsonify({"message": msg}), 200
         else:
             return jsonify({"error": msg}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     finally:
         if conn: conn.close()

@@ -75,18 +75,15 @@ def update_user_settings(user_id, data):
             params.append(data["gender"])
 
         if "profile_is_public" in data:
-            is_public = 1 if data["profile_is_public"] is True or data["profile_is_public"] == '1' else 0
+            is_public = 1 if data["profile_is_public"] is True or str(data["profile_is_public"]) == '1' else 0
             updates.append("profile_is_public = %s")
             params.append(is_public)
 
-        if "birth_date" in data and data["birth_date"]:
-            if current_user["birth_date"] is None:
-                updates.append("birth_date = %s")
-                params.append(data["birth_date"])
-            else:
-                pass
+        if "birth_date" in data:
+            updates.append("birth_date = %s")
+            params.append(data["birth_date"])
 
-        if "username" in data and data["username"] != current_user["username"]:
+        if "username" in data and data["username"] and data["username"] != current_user["username"]:
             if current_user["is_username_changed"] == 0:
                 cursor.execute("SELECT user_id FROM users WHERE username = %s", (data["username"],))
                 if cursor.fetchone():
@@ -98,7 +95,7 @@ def update_user_settings(user_id, data):
             else:
                 return False, "Username can only be changed once."
 
-        if "email" in data and data["email"] != current_user["email"]:
+        if "email" in data and data["email"] and data["email"] != current_user["email"]:
             cursor.execute("SELECT user_id FROM users WHERE email = %s", (data["email"],))
             if cursor.fetchone():
                 return False, "Email already in use"

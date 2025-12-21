@@ -181,7 +181,6 @@ hr {
     color: #000;
     font-weight: 700;
     padding: 12px;
-    border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
@@ -203,3 +202,19 @@ hr {
 .message-box.success { display: block; background: rgba(46, 160, 67, 0.2); color: #3fb950; }
 .message-box.error { display: block; background: rgba(248, 81, 73, 0.2); color: #f85149; }
 .hidden { display: none !important; }
+
+.crop-modal-content {
+    width: 95%;
+    max-width: 600px;
+    background-color: #161b22;
+}
+
+.img-container {
+    max-height: 500px;
+    overflow: hidden;
+}
+
+#image-to-crop {
+    max-width: 100%;
+    display: block;
+}
