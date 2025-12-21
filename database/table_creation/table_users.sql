@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS comments (
         FOREIGN KEY (production_id) REFERENCES productions(production_id) ON DELETE CASCADE,
     CONSTRAINT fk_comments_parent 
         FOREIGN KEY (parent_id) REFERENCES comments(comment_id) ON DELETE CASCADE,
-        
+
     KEY idx_comments_production_created (production_id, created_at),
     KEY idx_comments_user (user_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -97,4 +97,13 @@ CREATE TABLE IF NOT EXISTS reports (
         FOREIGN KEY (production_id) REFERENCES productions(production_id) ON DELETE SET NULL,
     CONSTRAINT fk_reports_comment
         FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE SET NULL
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS comment_likes (
+    user_id INT NOT NULL,
+    comment_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, comment_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

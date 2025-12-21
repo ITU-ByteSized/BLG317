@@ -459,3 +459,32 @@
     padding-left: 20px;
     border-left: 2px solid #333;
 }
+
+.spoiler-wrapper {
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.spoiler-cover {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    padding: 10px;
+    color: #3f8ad6;
+    border-radius: 4px;
+    font-weight: 500;
+    display: block;
+}
+
+.spoiler-content {
+    background-color: #222;
+    padding: 10px;
+    border-left: 3px solid #f00;
+    color: #ccc;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.btn-like.liked {
+    color: #3f8ad6;
+    border-color: #3f8ad6;
+}

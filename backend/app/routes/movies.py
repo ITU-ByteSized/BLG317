@@ -8,6 +8,7 @@ from backend.app.utils.db_fetch import (
     fetch_awards_by_movie
 )
 from backend.app.config.settings import DEFAULT_LIMIT
+from backend.app.utils.db_utils import get_db_connection
 
 bp = Blueprint("movies", __name__, url_prefix="/api")
 
@@ -63,3 +64,30 @@ def api_movie_detail(production_id):
 def api_episodes(production_id):
     data = fetch_episodes_by_series(production_id)
     return jsonify(data)
+
+@bp.route("/<id>/rate", methods=["POST"])
+def rate_movie(id):
+    data = request.get_json()
+    user_id = data.get("user_id")
+    rating = data.get("rating")
+
+    if not user_id or not rating:
+        return jsonify({"error": "Missing user_id or rating"}), 400
+
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        sql = """
+            INSERT INTO user_ratings (user_id, production_id, rating)
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE rating = VALUES(rating), rated_at = CURRENT_TIMESTAMP
+        """
+        cursor.execute(sql, (user_id, id, rating))
+        conn.commit()
+        
+        return jsonify({"success": True, "message": "Rating saved"})
+    except Exception as e:
+        print(f"Rating error: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if conn: conn.close()
