@@ -7,3 +7,4 @@ database/datasets/
 full.txt
 backend/static
 exports/
+csv_exports/
