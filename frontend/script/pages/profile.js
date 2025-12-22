@@ -1,6 +1,11 @@
 import { initNavbar } from "../components/navbar.js";
 import { getToken, getUser } from "../utils/storage.js";
 import { API_URL } from "../config.js";
+import { 
+    apiGetProfileDetails, 
+    apiGetUserRatings,
+    apiGetUserComments
+} from "../api/profile.api.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     initNavbar();
@@ -242,3 +247,76 @@ window.updateStatus = async (prodId, status) => {
         if (res.ok) window.location.reload();
     } catch (e) { console.error(e); }
 };
+
+
+async function renderContent(mainTab, subTab) {
+    const container = document.getElementById("profile-dynamic-content");
+    const subTabsWrapper = document.getElementById("sub-tabs-wrapper");
+    const email = getUserEmail();
+
+    container.innerHTML = '<p style="color:#666;">Loading...</p>';
+
+    if (mainTab === 'watching' || mainTab === 'plan_to_watch') {
+        subTabsWrapper.style.display = 'block';
+    } else {
+        subTabsWrapper.style.display = 'none';
+    }
+
+    if (mainTab === 'ratings') {
+        try {
+            const ratings = await apiGetUserRatings(email);
+            if (!ratings || ratings.length === 0) {
+                container.innerHTML = '<p style="padding:20px; color:#888;">No ratings yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = ratings.map(movie => `
+                <div class="p-movie-card" onclick="window.location.href='movie.html?id=${movie.production_id}'">
+                    <div class="p-poster-wrapper">
+                        <img src="${movie.poster_url || '../assets/poster-placeholder.png'}" alt="${movie.primary_title}">
+                        <div class="p-rating-badge">★ ${movie.user_rating}</div>
+                    </div>
+                    <div class="p-card-info">
+                        <h4>${movie.primary_title}</h4>
+                        <span>${movie.start_year || ''}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = '<p class="error">Failed to load ratings.</p>';
+        }
+    }
+
+    else if (mainTab === 'comments') {
+        try {
+            const comments = await apiGetUserComments(email);
+            if (!comments || comments.length === 0) {
+                container.innerHTML = '<p style="padding:20px; color:#888;">No comments yet.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:15px; width:100%;">
+                    ${comments.map(c => `
+                        <div class="p-comment-row" style="cursor:pointer;" onclick="window.location.href='movie.html?id=${c.production_id}'">
+                            <div style="display:flex; align-items:center; gap:15px; margin-bottom:10px;">
+                                <img src="${c.poster_url || '../assets/poster-placeholder.png'}" 
+                                     style="width:40px; height:60px; object-fit:cover; border-radius:4px;">
+                                <div>
+                                    <h4 style="margin:0; color:var(--accent-color); font-size:1rem;">${c.primary_title}</h4>
+                                    <small style="color:#666;">${new Date(c.created_at).toLocaleDateString()}</small>
+                                </div>
+                            </div>
+                            <p style="margin:0; color:#ccc; line-height:1.4;">"${c.content}"</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = '<p class="error">Failed to load comments.</p>';
+        }
+    }
+}

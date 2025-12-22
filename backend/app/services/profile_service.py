@@ -113,3 +113,47 @@ def update_watch_status(user_id, production_id, status):
         return False
     finally:
         if conn: conn.close()
+        
+def get_user_ratings(user_id):
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cursor = conn.cursor(dictionary=True)
+        sql = """
+            SELECT p.production_id, p.primary_title, p.poster_url, p.start_year, 
+                   ur.rating as user_rating, ur.created_at
+            FROM user_ratings ur
+            JOIN productions p ON ur.production_id = p.production_id
+            WHERE ur.user_id = %s
+            ORDER BY ur.created_at DESC
+        """
+        cursor.execute(sql, (user_id,))
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error fetching user ratings: {e}")
+        return []
+    finally:
+        if conn: conn.close()
+
+def get_user_comments(user_id):
+    conn = get_db_connection()
+    if not conn:
+        return []
+    try:
+        cursor = conn.cursor(dictionary=True)
+        sql = """
+            SELECT c.comment_id, c.content, c.created_at,
+                   p.production_id, p.primary_title, p.poster_url
+            FROM comments c
+            JOIN productions p ON c.production_id = p.production_id
+            WHERE c.user_id = %s
+            ORDER BY c.created_at DESC
+        """
+        cursor.execute(sql, (user_id,))
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error fetching user comments: {e}")
+        return []
+    finally:
+        if conn: conn.close()

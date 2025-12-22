@@ -2,6 +2,7 @@ import os
 from flask import Blueprint, jsonify, request
 from backend.app.utils.db_utils import get_db_connection
 from backend.app.utils.db_update import update_user_settings
+from backend.app.services.profile_service import get_user_ratings, get_user_comments
 from werkzeug.utils import secure_filename
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -165,5 +166,45 @@ def update_list_status():
             return jsonify({"message": "Updated"}), 200
         else:
             return jsonify({"error": "Failed"}), 400
+    finally:
+        if conn: conn.close()
+        
+@bp.route("/profile/ratings", methods=["GET"])
+def api_get_my_ratings():
+    email = request.args.get("email")
+    if not email:
+        return jsonify({"error": "Email required"}), 400
+        
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT user_id FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+            
+        ratings = get_user_ratings(user["user_id"])
+        return jsonify(ratings)
+    finally:
+        if conn: conn.close()
+
+@bp.route("/profile/comments", methods=["GET"])
+def api_get_my_comments():
+    email = request.args.get("email")
+    if not email:
+        return jsonify({"error": "Email required"}), 400
+        
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT user_id FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+            
+        comments = get_user_comments(user["user_id"])
+        return jsonify(comments)
     finally:
         if conn: conn.close()
