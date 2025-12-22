@@ -2,7 +2,6 @@ import { initNavbar } from "../components/navbar.js";
 import { getToken, getUser } from "../utils/storage.js";
 import { API_URL } from "../config.js";
 import { 
-    apiGetProfileDetails, 
     apiGetUserRatings,
     apiGetUserComments
 } from "../api/profile.api.js";
@@ -25,9 +24,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         avatar: document.querySelector(".profile-avatar-large"),
         statCount: document.getElementById("stat-count"),
         statYear: document.getElementById("stat-year"),
-        detailsContainer: document.querySelector(".profile-details"),
-        movieSection: document.querySelector(".movie-section"),
-        ratingsContainer: document.getElementById("profile-ratings")
+        ratingsContainer: document.getElementById("profile-ratings"),
+        dynamicContent: document.getElementById("profile-dynamic-content")
     };
 
     if (els.ratingsContainer) {
@@ -58,38 +56,43 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>
             </div>
         `;
+        els.dynamicContent = document.getElementById("profile-dynamic-content");
     }
 
     let profileData = null;
+    let currentUserEmail = "";
+    
     try {
         const localUser = getUser();
-        let query = "";
         if(localUser && localUser.email) {
-            query = `?email=${encodeURIComponent(localUser.email)}&current_user=${encodeURIComponent(localUser.email)}`;
-        }
-        
-        const resMe = await fetch(`${API_URL}/profile/me${query}`, { headers: { "Authorization": `Bearer ${token}` } });
-        const user = await resMe.json();
+            currentUserEmail = localUser.email;
+            const query = `?email=${encodeURIComponent(currentUserEmail)}&current_user=${encodeURIComponent(currentUserEmail)}`;
+            
+            const resMe = await fetch(`${API_URL}/profile/me${query}`, { headers: { "Authorization": `Bearer ${token}` } });
+            const user = await resMe.json();
 
-        if (user && !user.error) {
-            renderHeader(user, els);
+            if (user && !user.error) {
+                renderHeader(user, els);
 
-            if (user.is_private) {
-                document.getElementById("profile-dynamic-content").innerHTML = `<p class="error-text">${user.message || "Private profile"}</p>`;
-                return; 
-            }
+                if (user.is_private) {
+                    els.dynamicContent.innerHTML = `<p class="error-text">${user.message || "Private profile"}</p>`;
+                    return; 
+                }
 
-            const resDetails = await fetch(`${API_URL}/profile/details${query}`, { headers: { "Authorization": `Bearer ${token}` } });
-            profileData = await resDetails.json();
+                const resDetails = await fetch(`${API_URL}/profile/details${query}`, { headers: { "Authorization": `Bearer ${token}` } });
+                profileData = await resDetails.json();
 
-            if (profileData) {
-                renderContent("watching", profileData.watching, true); 
+                if (profileData && profileData.watching) {
+                    renderMovieList(profileData.watching, true); 
+                } else {
+                     els.dynamicContent.innerHTML = `<p class="empty-msg">List is empty.</p>`;
+                }
             }
         }
     } catch (e) {
         console.error("Profile load error", e);
-        if(document.getElementById("profile-dynamic-content"))
-            document.getElementById("profile-dynamic-content").innerHTML = `<p class="error-text">Failed to load profile.</p>`;
+        if(els.dynamicContent)
+            els.dynamicContent.innerHTML = `<p class="error-text">Failed to load profile.</p>`;
     }
 
     const mainBtns = document.querySelectorAll(".p-tab-btn");
@@ -108,20 +111,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 document.querySelectorAll(".p-sub-btn").forEach(b => b.classList.remove("active"));
                 document.querySelector('[data-sub="watching"]').classList.add("active");
                 
-                if (profileData) renderContent("watching", profileData.watching, true);
+                if (profileData) renderMovieList(profileData.watching, true);
 
-            } else {
+            } else if (mainKey === "plan_to_watch") {
                 subWrapper.style.display = "none";
-                
-                if (profileData) {
-                    if (mainKey === "comments") {
-                        renderComments(profileData.comments);
-                    } else if (mainKey === "ratings") {
-                        renderContent("ratings", profileData.ratings, false);
-                    } else {
-                        renderContent(mainKey, profileData[mainKey], true);
-                    }
-                }
+                if (profileData) renderMovieList(profileData.plan_to_watch, true);
+
+            } else if (mainKey === "ratings") {
+                subWrapper.style.display = "none";
+                renderRatings(currentUserEmail);
+
+            } else if (mainKey === "comments") {
+                subWrapper.style.display = "none";
+                renderComments(currentUserEmail);
             }
         });
     });
@@ -133,33 +135,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const subKey = btn.dataset.sub;
             
-            if (profileData) {
-                renderContent(subKey, profileData[subKey], subKey === 'watching');
+            if (profileData && profileData[subKey]) {
+                renderMovieList(profileData[subKey], subKey === 'watching');
             }
         });
     });
 });
 
-function renderContent(type, items, showActions) {
+function renderMovieList(items, showActions) {
     const container = document.getElementById("profile-dynamic-content");
     if (!container) return;
+    
     container.innerHTML = "";
+    container.style.display = "grid";
+    container.style.flexDirection = "unset";
+    container.style.gap = "20px";
     container.className = "content-grid-area";
 
     if (!items || items.length === 0) {
-        container.innerHTML = `<p class="empty-msg">No items found in this list.</p>`;
         container.style.display = "block";
+        container.innerHTML = `<p class="empty-msg">No items found in this list.</p>`;
         return;
     }
-    
-    container.style.display = "grid";
 
     items.forEach(item => {
         const div = document.createElement("div");
         div.className = "p-movie-card";
         
         let buttonsHtml = "";
-        if (showActions && type === 'watching') {
+        if (showActions) {
             buttonsHtml = `
                 <div class="card-overlay">
                     <button class="card-action-btn complete-btn" onclick="window.updateStatus('${item.production_id}', 'completed')" title="Mark as Completed">✓</button>
@@ -168,52 +172,92 @@ function renderContent(type, items, showActions) {
             `;
         }
 
-        let ratingBadge = "";
-        if (type === 'ratings' && item.average_rating) {
-            ratingBadge = `<div class="p-rating-badge">★ ${item.average_rating}</div>`;
-        }
-
         div.innerHTML = `
             <div class="p-poster-wrapper">
-                <img src="${item.poster_url || '../assets/poster_placeholder.png'}" alt="${item.primary_title}" loading="lazy">
-                ${ratingBadge}
+                <img src="${item.poster_url || '../assets/poster-placeholder.png'}" alt="${item.primary_title}" loading="lazy">
                 ${buttonsHtml}
             </div>
             <div class="p-card-info">
                 <h4>${item.primary_title}</h4>
                 <span>${item.start_year || ''}</span>
             </div>
-            <a href="movie.html?id=${item.production_id || item.rating_id}" class="p-card-link"></a>
+            <a href="movie.html?id=${item.production_id}" class="p-card-link"></a>
         `;
         container.appendChild(div);
     });
 }
 
-function renderComments(items) {
+async function renderRatings(email) {
     const container = document.getElementById("profile-dynamic-content");
     if (!container) return;
-    container.innerHTML = "";
+
+    container.innerHTML = '<p style="color:#666;">Loading ratings...</p>';
+    container.style.display = "grid"; 
+
+    try {
+        const ratings = await apiGetUserRatings(email);
+        
+        if (!ratings || ratings.length === 0) {
+            container.style.display = "block";
+            container.innerHTML = '<p class="empty-msg">No ratings yet.</p>';
+            return;
+        }
+        
+        container.innerHTML = ratings.map(movie => `
+            <div class="p-movie-card" onclick="window.location.href='movie.html?id=${movie.production_id}'">
+                <div class="p-poster-wrapper">
+                    <img src="${movie.poster_url || '../assets/poster-placeholder.png'}" alt="${movie.primary_title}">
+                    <div class="p-rating-badge">★ ${movie.user_rating}</div>
+                </div>
+                <div class="p-card-info">
+                    <h4>${movie.primary_title}</h4>
+                    <span>${movie.start_year || ''}</span>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p class="error-text">Failed to load ratings.</p>';
+    }
+}
+
+async function renderComments(email) {
+    const container = document.getElementById("profile-dynamic-content");
+    if (!container) return;
+
+    container.innerHTML = '<p style="color:#666;">Loading comments...</p>';
+    
     container.style.display = "flex";
     container.style.flexDirection = "column";
     container.style.gap = "15px";
 
-    if (!items || items.length === 0) {
-        container.innerHTML = "<p class='empty-msg'>No comments yet.</p>";
-        return;
-    }
+    try {
+        const comments = await apiGetUserComments(email);
+        
+        if (!comments || comments.length === 0) {
+            container.innerHTML = '<p class="empty-msg">No comments yet.</p>';
+            return;
+        }
 
-    items.forEach(c => {
-        const div = document.createElement("div");
-        div.className = "p-comment-row";
-        div.innerHTML = `
-            <div class="p-comment-header">
-                <strong><a href="movie.html?id=${c.production_id}">${c.primary_title}</a></strong>
-                <small>${new Date(c.created_at).toLocaleDateString()}</small>
+        container.innerHTML = comments.map(c => `
+            <div class="p-comment-row" style="cursor:pointer;" onclick="window.location.href='movie.html?id=${c.production_id}'">
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:10px;">
+                    <img src="${c.poster_url || '../assets/poster-placeholder.png'}" 
+                            style="width:40px; height:60px; object-fit:cover; border-radius:4px;">
+                    <div>
+                        <h4 style="margin:0; color:var(--accent-color); font-size:1rem;">${c.primary_title}</h4>
+                        <small style="color:#666;">${new Date(c.created_at).toLocaleDateString()}</small>
+                    </div>
+                </div>
+                <p style="margin:0; color:#ccc; line-height:1.4;">"${c.content}"</p>
             </div>
-            <p>${c.content}</p>
-        `;
-        container.appendChild(div);
-    });
+        `).join('');
+
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p class="error-text">Failed to load comments.</p>';
+    }
 }
 
 function renderHeader(user, els) {
@@ -239,84 +283,15 @@ function renderHeader(user, els) {
 window.updateStatus = async (prodId, status) => {
     if(!confirm(`Move to ${status}?`)) return;
     try {
+        const token = getToken();
+        const user = getUser();
+        if (!token || !user) return;
+
         const res = await fetch(`${API_URL}/profile/list/update`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${getToken()}` },
-            body: JSON.stringify({ email: getUser().email, production_id: prodId, status: status })
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ email: user.email, production_id: prodId, status: status })
         });
         if (res.ok) window.location.reload();
     } catch (e) { console.error(e); }
 };
-
-
-async function renderContent(mainTab, subTab) {
-    const container = document.getElementById("profile-dynamic-content");
-    const subTabsWrapper = document.getElementById("sub-tabs-wrapper");
-    const email = getUserEmail();
-
-    container.innerHTML = '<p style="color:#666;">Loading...</p>';
-
-    if (mainTab === 'watching' || mainTab === 'plan_to_watch') {
-        subTabsWrapper.style.display = 'block';
-    } else {
-        subTabsWrapper.style.display = 'none';
-    }
-
-    if (mainTab === 'ratings') {
-        try {
-            const ratings = await apiGetUserRatings(email);
-            if (!ratings || ratings.length === 0) {
-                container.innerHTML = '<p style="padding:20px; color:#888;">No ratings yet.</p>';
-                return;
-            }
-            
-            container.innerHTML = ratings.map(movie => `
-                <div class="p-movie-card" onclick="window.location.href='movie.html?id=${movie.production_id}'">
-                    <div class="p-poster-wrapper">
-                        <img src="${movie.poster_url || '../assets/poster-placeholder.png'}" alt="${movie.primary_title}">
-                        <div class="p-rating-badge">★ ${movie.user_rating}</div>
-                    </div>
-                    <div class="p-card-info">
-                        <h4>${movie.primary_title}</h4>
-                        <span>${movie.start_year || ''}</span>
-                    </div>
-                </div>
-            `).join('');
-            
-        } catch (err) {
-            console.error(err);
-            container.innerHTML = '<p class="error">Failed to load ratings.</p>';
-        }
-    }
-
-    else if (mainTab === 'comments') {
-        try {
-            const comments = await apiGetUserComments(email);
-            if (!comments || comments.length === 0) {
-                container.innerHTML = '<p style="padding:20px; color:#888;">No comments yet.</p>';
-                return;
-            }
-
-            container.innerHTML = `
-                <div style="display:flex; flex-direction:column; gap:15px; width:100%;">
-                    ${comments.map(c => `
-                        <div class="p-comment-row" style="cursor:pointer;" onclick="window.location.href='movie.html?id=${c.production_id}'">
-                            <div style="display:flex; align-items:center; gap:15px; margin-bottom:10px;">
-                                <img src="${c.poster_url || '../assets/poster-placeholder.png'}" 
-                                     style="width:40px; height:60px; object-fit:cover; border-radius:4px;">
-                                <div>
-                                    <h4 style="margin:0; color:var(--accent-color); font-size:1rem;">${c.primary_title}</h4>
-                                    <small style="color:#666;">${new Date(c.created_at).toLocaleDateString()}</small>
-                                </div>
-                            </div>
-                            <p style="margin:0; color:#ccc; line-height:1.4;">"${c.content}"</p>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        } catch (err) {
-            console.error(err);
-            container.innerHTML = '<p class="error">Failed to load comments.</p>';
-        }
-    }
-}
