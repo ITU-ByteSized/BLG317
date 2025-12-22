@@ -7,6 +7,7 @@ from backend.app.utils.db_fetch import (
     fetch_episodes_by_series, 
     fetch_awards_by_movie
 )
+from backend.app.utils.db_update import add_rating
 from backend.app.config.settings import DEFAULT_LIMIT
 from backend.app.utils.db_utils import get_db_connection
 
@@ -77,6 +78,22 @@ def api_movie_detail(production_id):
             finally:
                 if conn: conn.close()
     return jsonify(movie)
+
+@bp.route("/movies/<production_id>/rate", methods=["POST"])
+def api_rate_movie(production_id):
+    data = request.get_json()
+    rating = data.get("rating")
+    user_id = data.get("user_id")
+
+    if rating is None:
+        return jsonify({"error": "Rating is required"}), 400
+    
+    success = add_rating(production_id, rating)
+
+    if success:
+        return jsonify({"message": "Rating added"}), 200
+    else:
+        return jsonify({"error": "Failed to add rating"}), 500
 
 @bp.route("/movies/<production_id>/episodes", methods=["GET"])
 def api_episodes(production_id):
