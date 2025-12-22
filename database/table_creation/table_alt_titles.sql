@@ -12,4 +12,3 @@ CREATE TABLE IF NOT EXISTS alt_titles (
     FOREIGN KEY (region_code) REFERENCES regions(region_code) ON DELETE SET NULL,
     FOREIGN KEY (language_code) REFERENCES languages(language_code) ON DELETE SET NULL
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-

@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS user_watchlist (
     production_id VARCHAR(12) NOT NULL,
     status ENUM('watching', 'completed', 'plan_to_watch', 'dropped') 
         NOT NULL DEFAULT 'plan_to_watch',
-    added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_watchlist_user
         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
@@ -42,7 +42,6 @@ CREATE TABLE IF NOT EXISTS user_ratings (
     user_id INT NOT NULL,
     production_id VARCHAR(12) NOT NULL,
     rating TINYINT UNSIGNED NOT NULL,
-    review TEXT,
     rated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT chk_rating_range CHECK (rating BETWEEN 1 AND 10),
