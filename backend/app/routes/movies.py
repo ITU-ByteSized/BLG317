@@ -83,6 +83,11 @@ def api_episodes(production_id):
     data = fetch_episodes_by_series(production_id)
     return jsonify(data)
 
+@bp.route("/movies/<production_id>/awards", methods=["GET"])
+def api_movie_awards(production_id):
+    data = fetch_awards_by_movie(production_id)
+    return jsonify(data)
+
 @bp.route("/genres", methods=["GET"])
 def api_get_genres():
     from backend.app.utils.db_fetch import fetch_all_genres
