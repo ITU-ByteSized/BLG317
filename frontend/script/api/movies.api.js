@@ -4,8 +4,11 @@ export function apiGetHome() {
     return apiRequest("/movies/home");
 }
 
-export function apiSearchMovies(query = "", type = "all") {
-    let path = `/movies?search=${encodeURIComponent(query)}`;
+
+export function apiSearchMovies(query = "", type = "all", page = 1) {
+    
+    let path = `/movies?search=${encodeURIComponent(query)}&page=${page}&limit=20`; 
+    
     if (type && type !== "all") {
         path += `&type=${encodeURIComponent(type)}`;
     }
@@ -21,4 +24,16 @@ export function apiRateMovie(id, rating) {
         method: "POST",
         body: JSON.stringify({ rating })
     });
+}
+
+export function apiGetMovieEpisodes(id) {
+    return apiRequest(`/movies/${encodeURIComponent(id)}/episodes`);
+}
+
+export function apiGetMovieAwards(id) {
+    return apiRequest(`/movies/${encodeURIComponent(id)}/awards`);
+}
+
+export function apiGetAllGenres() {
+    return apiRequest("/genres");
 }

@@ -1,8 +1,23 @@
-# BLG317
+# BLG317 – Database Term Project
 
-ITU BLG317 – Database Term Project
+ITU BLG317 Database Systems Course Project  
+A full-stack movie database application built with Flask (backend), vanilla JavaScript (frontend), and MySQL.
 
-## Environment Setup
+---
+
+## Quick Start
+
+### 1. Install Dependencies
+
+
+
+```bash
+pip install -r requirements.txt
+```
+
+**Note:** Ensure you have latest versions of Python and MySQL installed on your system.
+
+## Database Configuration
 
 The backend uses a `.env` file located at `backend/.env` for database configuration.  
 Update the existing `backend/.env` file to match your local MySQL setup, for example:
@@ -11,10 +26,10 @@ Update the existing `backend/.env` file to match your local MySQL setup, for exa
 DB_HOST=127.0.0.1
 DB_NAME=bytesizedDB_project
 DB_USER=root
-DB_PASS=YourPasswordHere
+DB_PASS=your_password_here
 ```
 
-These values are read by the backend using python-dotenv.
+These values are read by the backend using `python-dotenv`.
 
 ## Makefile Commands
 
@@ -23,23 +38,28 @@ From the project root (`BLG317/`), you can use:
 
 ### Create database tables (schema)
 
-```make init-db```
+```bash
+make init-db
+```
 
 ### Insert seed data
-```make seed```
+```bash
+make seed
+```
 
 ### Run both: create schema + seed data
-```make db-setup```
+```bash
+make db-setup
+```
 
 ### Start the backend server
-```make run```
+```bash
+make run
+```
 
-make run will start the Flask backend on:
-http://127.0.0.1:5000
+The backend will start on: `http://127.0.0.1:5000`
 
-After starting the backend, you can open the frontend (e.g. via Live Server)
-on:
-http://127.0.0.1:5500
+After starting the backend, open the frontend (e.g., via Live Server) on: `http://127.0.0.1:5500`
 
 ## Database Schema
 

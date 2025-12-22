@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings • ByteSizedDB</title>
+    <link rel="stylesheet" href="../style/global.css">
+    <link rel="stylesheet" href="../style/pages/settings.css">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+</head>
+<body>
+    <header></header>
+
+    <main class="page settings-page">
+        <div class="settings-container">
+            <h1>Account Settings</h1>
+            
+            <div class="settings-section avatar-section">
+                <div class="avatar-wrapper">
+                    <img id="current-avatar" src="https://via.placeholder.com/150/111/555?text=User" alt="Avatar">
+                </div>
+                <div class="upload-btn-wrapper">
+                    <button type="button" id="btn-upload-trigger" class="btn btn-secondary">Change Photo</button>
+                    <input type="file" id="avatar-input" accept="image/*" class="hidden">
+                </div>
+            </div>
+
+            <form id="settings-form">
+                <div class="form-group">
+                    <label>Username (Changeable once)</label>
+                    <input type="text" id="set-username">
+                    <small id="username-warn" class="hidden" style="color: #d29922;">Username has already been changed.</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="set-email">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="set-gender">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Birth Date</label>
+                        <input type="date" id="set-birthdate">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="set-bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                </div>
+                
+                <hr>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="set-public">
+                        Make Profile Public
+                    </label>
+                    <div class="info-text">
+                        If unchecked, your profile details will be visible only to you.
+                    </div>
+                </div>
+
+                <hr>
+
+                <h3>Change Password</h3>
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="current-password" placeholder="Required only if changing password">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="new-password" placeholder="New password">
+                </div>
+
+                <button type="submit" class="btn btn-save">Save All Changes</button>
+            </form>
+            <div id="settings-message" class="message-box"></div>
+        </div>
+    </main>
+
+    <div id="crop-modal" class="modal hidden">
+        <div class="modal-content crop-modal-content">
+            <div class="modal-header">
+                <h3>Crop Image</h3>
+                <span class="close-modal" id="close-crop-modal">&times;</span>
+            </div>
+            <div class="modal-body crop-body">
+                <div class="img-container">
+                    <img id="image-to-crop" src="">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-cancel-crop" class="btn btn-login">Cancel</button>
+                <button type="button" id="btn-crop-save" class="btn btn-signup">Crop & Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script type="module" src="../script/pages/settings.js"></script>
+</body>
+</html>

@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS productions (
     end_year INT,
     runtime_minutes INT,
     poster_url VARCHAR(500),
+    INDEX idx_productions_start_year (start_year),
     FOREIGN KEY (type_id) REFERENCES title_types(type_id) ON DELETE SET NULL
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

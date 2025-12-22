@@ -1,0 +1,220 @@
+.settings-page {
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+}
+
+.settings-container {
+    width: 100%;
+    max-width: 550px;
+    background-color: #161b22;
+    padding: 35px;
+    border-radius: 12px;
+    border: 1px solid #30363d;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.settings-container h1 {
+    margin-bottom: 25px;
+    color: #fff;
+    font-size: 1.8rem;
+    text-align: center;
+    font-weight: 700;
+}
+.settings-container h3 {
+    color: #fff;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 10px;
+}
+
+.settings-section.avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #30363d;
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid #30363d;
+    overflow: hidden;
+    background-color: #0d1117;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#current-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #30363d;
+    background-color: #0d1117;
+    transition: border-color 0.3s ease;
+}
+
+.avatar-wrapper:hover #current-avatar {
+    border-color: var(--accent-color);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid #555;
+    color: #ccc;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background-color: rgba(247, 223, 30, 0.05);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.settings-container label {
+    display: block;
+    margin-bottom: 8px;
+    color: #8b949e;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.settings-container input[type="text"],
+.settings-container input[type="email"],
+.settings-container input[type="password"],
+.settings-container input[type="date"],
+.settings-container select,
+.settings-container textarea {
+    width: 100%;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.settings-container input:focus,
+.settings-container select:focus,
+.settings-container textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.settings-container input:disabled,
+.settings-container select:disabled{
+    background-color: #21262d;
+    color: #6e7681;
+    cursor: not-allowed;
+}
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: #1f242c;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    color: #fff !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    margin-bottom: 0 !important;
+}
+
+.settings-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-color);
+    cursor: pointer;
+}
+
+.info-text {
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin-left: 28px;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #30363d;
+    margin: 25px 0;
+}
+
+.btn-save {
+    width: 100%;
+    background-color: var(--accent-color);
+    color: #000;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.btn-save:hover {
+    filter: brightness(1.1);
+}
+
+.message-box {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+    display: none;
+}
+.message-box.success { display: block; background: rgba(46, 160, 67, 0.2); color: #3fb950; }
+.message-box.error { display: block; background: rgba(248, 81, 73, 0.2); color: #f85149; }
+.hidden { display: none !important; }
+
+.crop-modal-content {
+    width: 95%;
+    max-width: 600px;
+    background-color: #161b22;
+}
+
+.img-container {
+    max-height: 500px;
+    overflow: hidden;
+}
+
+#image-to-crop {
+    max-width: 100%;
+    display: block;
+}

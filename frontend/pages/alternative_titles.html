@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alternative Titles • ByteSizedDB</title>
+    <link rel="stylesheet" href="../style/global.css">
+    <link rel="stylesheet" href="../style/pages/alternative_titles.css">
+</head>
+<body>
+
+    <header></header>
+
+    <main class="page alt-container">
+        <a id="back-link" href="#" class="back-btn">← Back to Movie Details</a>
+
+        <div class="movie-header">
+            <h1 id="movie-title">Loading...</h1>
+            <p style="color: #888;">International Releases & Alternative Titles</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="alt-table">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Region</th>
+                        <th style="width: 15%;">Language</th>
+                        <th style="width: 45%;">Localized Title</th>
+                        <th style="width: 20%;">Type / Attribute</th>
+                    </tr>
+                </thead>
+                <tbody id="alt-titles-body">
+                    <tr><td colspan="4" style="text-align:center; padding: 20px;">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script type="module" src="../script/pages/alternative_titles.js"></script>
+</body>
+</html>
