@@ -125,3 +125,45 @@ def update_profile():
         return jsonify({"error": str(e)}), 500
     finally:
         if conn: conn.close()
+        
+@bp.route("/profile/details", methods=["GET"])
+def get_profile_details():
+    email = request.args.get("email")
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT user_id FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+            
+        from backend.app.services.profile_service import get_profile_full_details
+        data = get_profile_full_details(user["user_id"])
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if conn: conn.close()
+
+@bp.route("/profile/list/update", methods=["POST"])
+def update_list_status():
+    data = request.get_json()
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT user_id FROM users WHERE email = %s", (data.get("email"),))
+        user = cursor.fetchone()
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        from backend.app.services.profile_service import update_watch_status
+        success = update_watch_status(user["user_id"], data.get("production_id"), data.get("status"))
+        
+        if success:
+            return jsonify({"message": "Updated"}), 200
+        else:
+            return jsonify({"error": "Failed"}), 400
+    finally:
+        if conn: conn.close()
